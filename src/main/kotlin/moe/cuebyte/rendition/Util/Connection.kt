@@ -19,7 +19,7 @@ internal object Connection {
 
   fun get(): Jedis {
     if (conn != null) return conn!!
-    if (pool != null) return pool!!.getResource()
+    if (pool != null) return pool!!.resource
     throw Exception("The connection has not been initialized.")
   }
 }

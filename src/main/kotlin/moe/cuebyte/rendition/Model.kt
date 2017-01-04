@@ -1,6 +1,8 @@
 package moe.cuebyte.rendition
 
 import moe.cuebyte.rendition.Util.Connection
+import moe.cuebyte.rendition.Util.genField
+import moe.cuebyte.rendition.Util.genId
 import java.util.*
 
 abstract class Model(val name: String) {
@@ -48,21 +50,21 @@ abstract class Model(val name: String) {
     val id = input.id
     // --- BEGIN Transaction ---
     val t = Connection.get().multi()
-    t.hmset(pk.genKey(id), input.encodeData())
+    t.hmset(genId(this, id), input.encodeData())
     input.stringIndices.forEach {
-      t.sadd(it.key.genKey(it.value), id)
+      t.sadd(genField(this, it.key, it.value), id)
     }
     input.doubleIndices.forEach {
-      t.zadd(it.key.genKey(), mutableMapOf(id to it.value))
+      t.zadd(genField(this, it.key), mutableMapOf(id to it.value))
     }
     return if (t.exec().isEmpty()) null else id
     // --- END Transaction ---
   }
 
-  protected fun bool(default: Boolean = false) = Column(this, Boolean::class.java, default)
-  protected fun string(default: String = "") = Column(this, String::class.java, default)
-  protected fun int(default: Int = 0) = Column(this, Int::class.java, default)
-  protected fun long(default: Long = 0) = Column(this, Long::class.java, default)
-  protected fun float(default: Float = 0f) = Column(this, Float::class.java, default)
-  protected fun double(default: Double = 0.0) = Column(this, Double::class.java, default)
+  protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
+  protected fun string(default: String = "") = Column(String::class.java, default)
+  protected fun int(default: Int = 0) = Column(Int::class.java, default)
+  protected fun long(default: Long = 0) = Column(Long::class.java, default)
+  protected fun float(default: Float = 0f) = Column(Float::class.java, default)
+  protected fun double(default: Double = 0.0) = Column(Double::class.java, default)
 }

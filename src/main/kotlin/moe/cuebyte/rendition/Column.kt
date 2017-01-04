@@ -1,7 +1,7 @@
 package moe.cuebyte.rendition
 
-class Column(val model: Model, val type: Class<*>, val default: Any) {
-  internal var name: String = ""
+class Column(val type: Class<*>, val default: Any) {
+  internal lateinit var name: String // Initialized at Model::initialize
   internal var isPk = false; private set
   internal var isIndex = false; private set
   internal var automated = false; internal set
@@ -22,14 +22,6 @@ class Column(val model: Model, val type: Class<*>, val default: Any) {
     if (isPk || isIndex) throw Exception("a column should only be set as an primaryKey or with an index")
     isIndex = true
     return this
-  }
-
-  fun genKey(value: String = ""): String {
-    return when {
-      this.isPk -> "${model.name}:$value"
-      this.isIndex -> "${model.name}:$name:$value"
-      else -> throw Exception("error")
-    }
   }
 
   fun checkType(value: Any) = value.javaClass == type

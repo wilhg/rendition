@@ -10,32 +10,32 @@ open class Input(val model: Model) : HashMap<String, Any>() {
   internal val doubleIndices: MutableMap<Column, Double> = HashMap()
   internal val data: MutableMap<Column, String> = HashMap()
 
+  open protected fun idInit() {}
+  open protected fun indicesInit() {}
+  open protected fun dataInit() {}
+
+  fun init() {
+    val tmpSet = keys.toHashSet()
+    tmpSet.removeAll(model.columnSet.map { it.name })
+    if (!tmpSet.isEmpty()) throw Exception("Data do not match the schema.")
+
+    idInit()
+    indicesInit()
+    dataInit()
+  }
+
   fun encodeData(): Map<String, String> {
     val map = HashMap<String, String>()
     data.forEach { map.put(it.key.name, it.value) }
     return map
   }
 
-  open protected fun idInit() {}
-  open protected fun indicesInit() {}
-  open protected fun dataInit() {}
-
-  fun init() {
-    val set = keys.toHashSet()
-    set.removeAll(model.columnSet.map { it.name })
-    if (!set.isEmpty()) throw Exception("Data do not match the schema.")
-
-    idInit()
-    indicesInit()
-    dataInit()
-  }
 }
 
 class InsertData(model: Model) : Input(model) {
   override fun idInit() {
     val pk = model.pk
     if (pk.automated) {
-      //TODO
       id = IdGenerator.next()
       return
     }
