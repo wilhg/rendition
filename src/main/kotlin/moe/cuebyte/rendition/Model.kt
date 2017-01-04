@@ -1,7 +1,6 @@
-package moe.cuebyte.redition
+package moe.cuebyte.rendition
 
-import com.sun.org.apache.xpath.internal.operations.Bool
-import moe.cuebyte.redition.Util.Connection
+import moe.cuebyte.rendition.Util.Connection
 import java.util.*
 
 

@@ -1,4 +1,4 @@
-package moe.cuebyte.redition.Util
+package moe.cuebyte.rendition.Util
 
 import redis.clients.jedis.*
 

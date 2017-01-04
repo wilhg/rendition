@@ -1,4 +1,4 @@
-package moe.cuebyte.redition
+package moe.cuebyte.rendition
 
 class Column(val model: Model, val type: Class<*>, val default: Any) {
   internal var name: String = ""

@@ -1,6 +1,6 @@
-package moe.cuebyte.redition
+package moe.cuebyte.rendition
 
-import moe.cuebyte.redition.Util.IdGenerator
+import moe.cuebyte.rendition.Util.IdGenerator
 import java.util.*
 
 open class Input(val model: Model) : HashMap<String, Any>() {

@@ -1,6 +1,7 @@
-package moe.cuebyte.redition
+package moe.cuebyte.rendition
 
-import moe.cuebyte.redition.Util.Connection
+import moe.cuebyte.rendition.Model
+import moe.cuebyte.rendition.Util.Connection
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 
