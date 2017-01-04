@@ -25,11 +25,10 @@ abstract class Model(val name: String) {
 
       columnSet.add(col)
       if (col.isPk) {
-        pk = col
-        if (pk.type == Boolean::class.java) throw Exception("Primary key type error.")
-        if (pk.type != String::class.java) {
-          indexSet.add(pk)
-          pk.automated = false
+        if (col.type == Boolean::class.java) throw Exception("Primary key type error.")
+        if (col.type != String::class.java) {
+          indexSet.add(col)
+          col.automated = false
         }
       }
       if (col.isIndex) indexSet.add(col)
