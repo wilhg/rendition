@@ -12,7 +12,7 @@ abstract class Model(val name: String) {
    */
   val schema: MutableMap<String, Column> = HashMap()
 
-  private val initialized: Boolean = false
+  private var initialized: Boolean = false
   internal lateinit var pk: Column
   internal val columnSet: MutableSet<Column> = HashSet()
   internal val indexSet: MutableSet<Column> = HashSet()
@@ -35,6 +35,8 @@ abstract class Model(val name: String) {
       }
       if (col.isIndex) indexSet.add(col)
     }
+
+    initialized = true
   }
 
   /**
