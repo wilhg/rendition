@@ -3,30 +3,6 @@ package moe.cuebyte.rendition
 import moe.cuebyte.rendition.Util.Connection
 import java.util.*
 
-
-class Lockable<T>(val data: T) {
-  var locked: Boolean = false; private set
-
-  /**
-   * @return succeeded or failed
-   */
-  fun runThenLock(cb: (T)->Unit): Boolean {
-    if (locked) return false
-
-    cb(data)
-    locked = true
-    return true
-  }
-
-  fun lock() {
-    locked = true
-  }
-
-  fun unlock() {
-    locked = false
-  }
-}
-
 abstract class Model(val name: String) {
 
   /**
