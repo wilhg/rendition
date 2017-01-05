@@ -12,11 +12,11 @@ open class Input : HashMap<String, Any> {
   internal val doubleIndices: MutableMap<Column, Double> = HashMap()
   internal val data: MutableMap<Column, String> = HashMap()
 
-  constructor(model: Model) : super() {
+  protected constructor(model: Model) : super() {
     this.model = model
   }
 
-  constructor(model: Model, data: Map<String, Any>) : super(data) {
+  protected constructor(model: Model, data: Map<String, Any>) : super(data) {
     this.model = model
   }
 
@@ -36,7 +36,8 @@ open class Input : HashMap<String, Any> {
     initialized = true
   }
 
-  fun encodeData(): Map<String, String> {
+  internal fun encodeData(): Map<String, String> {
+    if (!initialized) throw Exception("Internal error, Input hasn't been initialized.")
     val map = HashMap<String, String>()
     data.forEach { map.put(it.key.name, it.value) }
     return map
@@ -55,30 +56,30 @@ class InsertData : Input {
       return
     }
     if (this[pk.name] == null || this[pk.name] == "") throw Exception("Id has not defined.")
-    if (model.pk.checkType(this[pk.name]!!)) throw Exception("Id type was error.")
+    if (model.pk.validate(this[pk.name]!!)) throw Exception("Id type was error.")
 
     id = this[pk.name].toString()
   }
 
   override fun indicesInit() {
-    model.indexSet.forEach { index ->
-      this[index.name] ?: throw Exception("Index-${index.name} shall be defined.")
-      if (!index.checkType(this[index.name]!!)) throw Exception("${index.name} type error.")
-      when (this[index.name]) {
-        is String -> stringIndices.put(index, this[index.name] as String)
-        is Number -> doubleIndices.put(index, this[index.name] as Double)
+    model.indexSet.forEach { idx ->
+      this[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
+      if (!idx.validate(this[idx.name]!!)) throw Exception("${idx.name} type error.")
+      when (this[idx.name]) {
+        is String -> stringIndices.put(idx, this[idx.name] as String)
+        is Number -> doubleIndices.put(idx, this[idx.name] as Double)
       }
     }
   }
 
   override fun dataInit() {
-    model.columnSet.forEach {
-      if (it.name !in keys) {
-        data.put(it, it.default.toString())
-      } else if (!it.checkType(this[it.name]!!)) {
-        throw Exception("${it.name} type error.")
+    model.columnSet.forEach { col ->
+      if (col.name !in keys) {
+        data.put(col, col.default.toString())
+      } else if (!col.validate(this[col.name]!!)) {
+        throw Exception("${col.name} type error.")
       } else {
-        data.put(it, this[it.name].toString())
+        data.put(col, this[col.name].toString())
       }
     }
   }
@@ -91,21 +92,20 @@ class UpdateData : Input {
 
   override fun idInit() {}
   override fun indicesInit() {
-    model.indexSet.forEach {
-      when (this[it.name]) {
-        is String -> stringIndices.put(it, this[it.name] as String)
-        is Number -> doubleIndices.put(it, this[it.name] as Double)
+    model.indexSet.forEach { index ->
+      when (this[index.name]) {
+        is String -> stringIndices.put(index, this[index.name] as String)
+        is Number -> doubleIndices.put(index, this[index.name] as Double)
       }
     }
   }
 
   override fun dataInit() {
-    model.columnSet.forEach {
-      if (!it.checkType(this[it.name]!!)) {
-        throw Exception("${it.name} type error.")
-      } else {
-        data.put(it, this[it.name].toString())
+    model.columnSet.forEach { col ->
+      if (!col.validate(this[col.name]!!)) {
+        throw Exception("${col.name} type error.")
       }
+      data.put(col, this[col.name].toString())
     }
   }
 }

@@ -1,8 +1,8 @@
 package moe.cuebyte.rendition
 
 import moe.cuebyte.rendition.Util.Connection
-import moe.cuebyte.rendition.Util.genField
 import moe.cuebyte.rendition.Util.genId
+import moe.cuebyte.rendition.Util.genKey
 import java.util.*
 
 abstract class Model(val name: String) {
@@ -12,30 +12,33 @@ abstract class Model(val name: String) {
    */
   val schema: MutableMap<String, Column> = HashMap()
 
-  private var initialized: Boolean = false
   internal lateinit var pk: Column
   internal val columnSet: MutableSet<Column> = HashSet()
   internal val indexSet: MutableSet<Column> = HashSet()
+  private var initialized: Boolean = false
 
   internal fun initialize() {
     if (initialized) return
-    if (schema.isEmpty()) throw Exception("Columns should be initialized first.")
+    if (schema.isEmpty()) {
+      throw Exception("Columns should be initialized first.")
+    }
 
     schema.forEach {
       val col = it.value
       col.name = it.key
 
       columnSet.add(col)
+      if (col.isIndex) indexSet.add(col)
       if (col.isPk) {
-        if (col.type == Boolean::class.java) throw Exception("Primary key type error.")
+        if (col.type == Boolean::class.java) {
+          throw Exception("Primary key can not defined as Boolean")
+        }
         if (col.type != String::class.java) {
           indexSet.add(col)
           col.automated = false
         }
       }
-      if (col.isIndex) indexSet.add(col)
     }
-
     initialized = true
   }
 
@@ -43,10 +46,10 @@ abstract class Model(val name: String) {
    * Use Transaction
    * @return id value in string if succeed, else return null
    */
-  fun insert(fill: (InsertData)->Unit): String? {
+  fun insert(body: (InsertData)->Unit): String? {
     initialize()
     val input = InsertData(this)
-    fill(input)
+    body(input)
     return commonInsert(input)
   }
 
@@ -68,10 +71,10 @@ abstract class Model(val name: String) {
     val t = Connection.get().multi()
     t.hmset(genId(this, id), input.encodeData())
     input.stringIndices.forEach {
-      t.sadd(genField(this, it.key, it.value), id)
+      t.sadd(genKey(this, it.key, it.value), id)
     }
     input.doubleIndices.forEach {
-      t.zadd(genField(this, it.key), mutableMapOf(id to it.value))
+      t.zadd(genKey(this, it.key), mutableMapOf(id to it.value))
     }
     return if (t.exec().isEmpty()) null else id
     // --- END Transaction ---
