@@ -47,6 +47,16 @@ abstract class Model(val name: String) {
     initialize()
     val input = InsertData(this)
     fill(input)
+    return commonInsert(input)
+  }
+
+  fun insert(data: Map<String, Any>): String? {
+    initialize()
+    val input = InsertData(this, data)
+    return commonInsert(input)
+  }
+
+  private fun commonInsert(input: InsertData): String? {
     input.init()
 
     val id = input.id

@@ -3,18 +3,29 @@ package moe.cuebyte.rendition
 import moe.cuebyte.rendition.Util.IdGenerator
 import java.util.*
 
-open class Input(val model: Model) : HashMap<String, Any>() {
+open class Input : HashMap<String, Any> {
 
+  val model: Model
+  private var initialized = false
   internal lateinit var id: String
   internal val stringIndices: MutableMap<Column, String> = HashMap()
   internal val doubleIndices: MutableMap<Column, Double> = HashMap()
   internal val data: MutableMap<Column, String> = HashMap()
+
+  constructor(model: Model) : super() {
+    this.model = model
+  }
+
+  constructor(model: Model, data: Map<String, Any>) : super(data) {
+    this.model = model
+  }
 
   open protected fun idInit() {}
   open protected fun indicesInit() {}
   open protected fun dataInit() {}
 
   fun init() {
+    if (initialized) return
     val tmpSet = keys.toHashSet()
     tmpSet.removeAll(model.columnSet.map { it.name })
     if (!tmpSet.isEmpty()) throw Exception("Data do not match the schema.")
@@ -22,6 +33,7 @@ open class Input(val model: Model) : HashMap<String, Any>() {
     idInit()
     indicesInit()
     dataInit()
+    initialized = true
   }
 
   fun encodeData(): Map<String, String> {
@@ -29,10 +41,13 @@ open class Input(val model: Model) : HashMap<String, Any>() {
     data.forEach { map.put(it.key.name, it.value) }
     return map
   }
-
 }
 
-class InsertData(model: Model) : Input(model) {
+class InsertData : Input {
+
+  constructor(model: Model) : super(model)
+  constructor(model: Model, data: Map<String, Any>) : super(model, data)
+
   override fun idInit() {
     val pk = model.pk
     if (pk.automated) {
@@ -69,7 +84,11 @@ class InsertData(model: Model) : Input(model) {
   }
 }
 
-class UpdateData(model: Model) : Input(model) {
+class UpdateData : Input {
+
+  constructor(model: Model) : super(model)
+  constructor(model: Model, data: Map<String, Any>) : super(model, data)
+
   override fun idInit() {}
   override fun indicesInit() {
     model.indexSet.forEach {

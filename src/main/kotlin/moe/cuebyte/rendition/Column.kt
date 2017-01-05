@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition
 
 class Column(val type: Class<*>, val default: Any) {
+
   internal lateinit var name: String // Initialized at Model::initialize
   internal var isPk = false; private set
   internal var isIndex = false; private set
