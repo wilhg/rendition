@@ -7,7 +7,7 @@ open class Input : HashMap<String, Any> {
 
   val model: Model
   private var initialized = false
-  internal lateinit var id: String; private set
+  internal lateinit var id: String
   internal val stringIndices: MutableMap<Column, String> = HashMap()
   internal val doubleIndices: MutableMap<Column, Double> = HashMap()
   internal val data: MutableMap<Column, String> = HashMap()
