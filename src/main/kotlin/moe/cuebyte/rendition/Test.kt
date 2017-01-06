@@ -19,6 +19,12 @@ object Red : Model("Red") {
 }
 
 fun main(args: Array<String>) {
+
+
+//  mapOf<String, Int>("a" to 1).mapValues { it.value.toString() }
+  mapOf<String, Int>("a" to 1).map { it to it.value.toString() }.toMap()
+
+
   println(1)
 //  Connection.set(JedisPool(JedisPoolConfig(), "localhost"))
 

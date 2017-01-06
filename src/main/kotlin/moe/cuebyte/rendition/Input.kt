@@ -26,9 +26,7 @@ open class Input : HashMap<String, Any> {
 
   fun init() {
     if (initialized) return
-    val tmpSet = keys.toHashSet()
-    tmpSet.removeAll(model.columnSet.map { it.name })
-    if (!tmpSet.isEmpty()) throw Exception("Data do not match the schema.")
+    if (!checkColsName()) throw Exception("Data do not match the schema.")
 
     idInit()
     indicesInit()
@@ -38,9 +36,13 @@ open class Input : HashMap<String, Any> {
 
   internal fun encodeData(): Map<String, String> {
     if (!initialized) throw Exception("Internal error, Input hasn't been initialized.")
-    val map = HashMap<String, String>()
-    data.forEach { map.put(it.key.name, it.value) }
-    return map
+    return data.mapKeys { it.key.name }
+  }
+
+  private fun checkColsName(): Boolean {
+    val tmpSet = keys.toHashSet()
+    tmpSet.removeAll(model.columnSet.map { it.name })
+    return tmpSet.isEmpty()
   }
 }
 
