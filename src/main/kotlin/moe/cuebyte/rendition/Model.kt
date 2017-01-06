@@ -27,17 +27,9 @@ abstract class Model(val name: String) {
       val col = it.value
       col.name = it.key
 
-      columnSet.add(col)
       if (col.isIndex) indexSet.add(col)
-      if (col.isPk) {
-        if (col.type == Boolean::class.java) {
-          throw Exception("Primary key can not defined as Boolean")
-        }
-        if (col.type != String::class.java) {
-          indexSet.add(col)
-          col.automated = false
-        }
-      }
+      if (col.isPk) handlePk(col)
+      columnSet.add(col)
     }
     initialized = true
   }
@@ -63,6 +55,14 @@ abstract class Model(val name: String) {
     return commonInsert(input)
   }
 
+  protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
+  protected fun string(default: String = "") = Column(String::class.java, default)
+  protected fun int(default: Int = 0) = Column(Int::class.java, default)
+  protected fun long(default: Long = 0) = Column(Long::class.java, default)
+  protected fun float(default: Float = 0f) = Column(Float::class.java, default)
+  protected fun double(default: Double = 0.0) = Column(Double::class.java, default)
+
+
   private fun commonInsert(input: InsertData): String? {
     input.init()
 
@@ -80,10 +80,13 @@ abstract class Model(val name: String) {
     // --- END Transaction ---
   }
 
-  protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
-  protected fun string(default: String = "") = Column(String::class.java, default)
-  protected fun int(default: Int = 0) = Column(Int::class.java, default)
-  protected fun long(default: Long = 0) = Column(Long::class.java, default)
-  protected fun float(default: Float = 0f) = Column(Float::class.java, default)
-  protected fun double(default: Double = 0.0) = Column(Double::class.java, default)
+  private fun handlePk(pk: Column) {
+    if (pk.type == Boolean::class.java) {
+      throw Exception("Primary key can not defined as Boolean")
+    }
+    if (pk.type != String::class.java) {
+      indexSet.add(pk)
+      pk.automated = false
+    }
+  }
 }

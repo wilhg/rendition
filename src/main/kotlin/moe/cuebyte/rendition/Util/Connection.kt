@@ -3,16 +3,17 @@ package moe.cuebyte.rendition.Util
 import redis.clients.jedis.*
 
 
-internal object Connection {
+object Connection {
+
   private var conn: Jedis? = null
   private var pool: JedisPool? = null
 
-  fun init(connection: Jedis) {
+  fun set(jedis: Jedis) {
     if (conn != null || this.pool != null) throw Exception("Connection has been set.")
-    conn = connection
+    conn = jedis
   }
 
-  fun init(pool: JedisPool) {
+  fun set(pool: JedisPool) {
     if (conn != null || this.pool != null) throw Exception("Connection has been set.")
     this.pool = pool
   }

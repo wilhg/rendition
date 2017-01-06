@@ -19,21 +19,22 @@ object Red : Model("Red") {
 }
 
 fun main(args: Array<String>) {
-  Connection.init(JedisPool(JedisPoolConfig(), "localhost"))
+  println(1)
+//  Connection.set(JedisPool(JedisPoolConfig(), "localhost"))
 
-  Red.where.or {
-    it["name"] eq "Bill"
-    it["age"] range 1..2
-  } // coooool
+//  Red.where.or {
+//    it["name"] eq "Bill"
+//    it["age"] range 1..2
+//  }
 
-  Red.findBy("name", "Bill")
-  Red.findBy("age", 12)
-  Red.find(12)
+//  Red.findBy("name", "Bill")
+//  Red.findBy("age", 12)
+//  Red.find(12)
 
-  Red.insert {
-    it["name"] = "a"
-    it["gender"] = true
-    it["age"] = 16
-    it["content"] = "nope"
-  }
+//  Red.insert {
+//    it["name"] = "a"
+//    it["gender"] = true
+//    it["age"] = 16
+//    it["content"] = "nope"
+//  }
 }
