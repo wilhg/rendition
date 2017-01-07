@@ -38,10 +38,9 @@ abstract class Model(val name: String) {
    * Use Transaction
    * @return id value in string if succeed, else return null
    */
-  fun insert(body: (InsertData)->Unit): String? {
+  fun insert(data: Map<String, Any>): String? {
     initialize()
-    val input = InsertData(this)
-    body(input)
+    val input = InsertData(this, data)
     return commonInsert(input)
   }
 
@@ -49,10 +48,10 @@ abstract class Model(val name: String) {
    * Use Transaction
    * @return id value in string if succeed, else return null
    */
-  fun insert(data: Map<String, Any>): String? {
-    initialize()
-    val input = InsertData(this, data)
-    return commonInsert(input)
+  fun insert(body: (MutableMap<String, Any>)->Unit): String? {
+    val map = HashMap<String, Any>()
+    body(map)
+    return insert(map)
   }
 
   protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
