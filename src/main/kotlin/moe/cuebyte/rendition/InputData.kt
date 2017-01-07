@@ -46,7 +46,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
       return
     }
     if (input[pk.name] == null || input[pk.name] == "") throw Exception("Id has not defined.")
-    if (model.pk.validate(input[pk.name]!!)) throw Exception("Id type was error.")
+    if (model.pk.checkType(input[pk.name]!!)) throw Exception("Id type was error.")
 
     id = input[pk.name].toString()
   }
@@ -54,7 +54,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
   override fun indicesInit() {
     model.indexSet.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
-      if (!idx.validate(input[idx.name]!!)) throw Exception("${idx.name} type error.")
+      if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
       when (input[idx.name]) {
         is String -> stringIndices.put(idx, input[idx.name] as String)
         is Number -> doubleIndices.put(idx, input[idx.name] as Double)
@@ -66,7 +66,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.columnSet.forEach { col ->
       if (col.name !in input.keys) {
         data.put(col, col.default.toString())
-      } else if (!col.validate(input[col.name]!!)) {
+      } else if (!col.checkType(input[col.name]!!)) {
         throw Exception("${col.name} type error.")
       } else {
         data.put(col, input[col.name].toString())
@@ -79,17 +79,17 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
 
   override fun idInit() {}
   override fun indicesInit() {
-    model.indexSet.forEach { index ->
-      when (input[index.name]) {
-        is String -> stringIndices.put(index, input[index.name] as String)
-        is Number -> doubleIndices.put(index, input[index.name] as Double)
+    model.indexSet.forEach { idx ->
+      when (input[idx.name]) {
+        is String -> stringIndices.put(idx, input[idx.name] as String)
+        is Number -> doubleIndices.put(idx, input[idx.name] as Double)
       }
     }
   }
 
   override fun dataInit() {
     model.columnSet.forEach { col ->
-      if (!col.validate(input[col.name]!!)) {
+      if (!col.checkType(input[col.name]!!)) {
         throw Exception("${col.name} type error.")
       }
       data.put(col, input[col.name].toString())

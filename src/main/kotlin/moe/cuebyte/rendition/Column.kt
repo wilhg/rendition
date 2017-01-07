@@ -25,5 +25,5 @@ class Column(val type: Class<*>, val default: Any) {
     return this
   }
 
-  fun validate(value: Any) = value.javaClass == type
+   internal fun checkType(value: Any) = value.javaClass == type
 }
