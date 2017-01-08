@@ -3,20 +3,25 @@ package moe.cuebyte.rendition
 open class IncompletedColumn(val type: Class<*>, val default: Any) {
   enum class Info {
     NONE,
-    STRING_PK,
-    DOUBLE_PK,
-    STRING_INDEX,
-    DOUBLE_INDEX
+    STRING_PK, DOUBLE_PK,
+    STRING_INDEX, DOUBLE_INDEX
   }
 
+  internal var automated = false
   private var info: Info = Info.NONE
 
-  internal var automated = false
-
   fun primaryKey(): IncompletedColumn {
-    if (info != Info.NONE) throw Exception("a column should only be set as primaryKey or with an index")
-    if (type == String::class.java) info = Info.STRING_PK
-    else info = Info.DOUBLE_PK
+    if (info != Info.NONE) {
+      throw Exception("a column should only be set as primaryKey or with an index")
+    }
+    if (type == Boolean::class.java) {
+      throw Exception("Primary key could not be bool.")
+    }
+    info = if (type == String::class.java) {
+      Info.STRING_PK
+    } else {
+      Info.DOUBLE_PK
+    }
     return this
   }
 
@@ -24,14 +29,22 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
     if (info == Info.STRING_PK || info == Info.DOUBLE_PK) {
       throw Exception("Only Id could be generate automatically.")
     }
+    if (type == Boolean::class.java) {
+      throw Exception("Index could not be bool.")
+    }
     automated = true
     return this
   }
 
   fun index(): IncompletedColumn {
-    if (info != Info.NONE) throw Exception("a column should only be set as an primaryKey or with an index")
-    if (type == String::class.java) info = Info.STRING_INDEX
-    else info = Info.DOUBLE_INDEX
+    if (info != Info.NONE) {
+      throw Exception("a column should only be set as an primaryKey or with an index")
+    }
+    info = if (type == String::class.java) {
+      Info.STRING_INDEX
+    } else {
+      Info.DOUBLE_INDEX
+    }
     return this
   }
 
