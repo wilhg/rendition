@@ -27,7 +27,8 @@ open class InputData(val model: Model, val input: Map<String, Any>){
 
   private fun checkColsName(): Boolean {
     val tmpSet = input.keys.toHashSet()
-    tmpSet.removeAll(model.columnSet.map { it.name })
+    tmpSet.removeAll(model.stringIndices.map { it.name })
+    tmpSet.removeAll(model.doubleIndices.map { it.name })
     return tmpSet.isEmpty()
   }
 }
@@ -47,18 +48,20 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
   }
 
   override fun indicesInit() {
-    model.indexSet.forEach { idx ->
+    model.stringIndices.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
-      if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      when(idx.type) {
-        String::class.java -> stringIndices.put(idx, input[idx.name] as String)
-        else -> doubleIndices.put(idx, input[idx.name] as Double)
-      }
+      if (input[idx.name]!! !is String) throw Exception("${idx.name} should be String.")
+      stringIndices.put(idx, input[idx.name] as String)
+    }
+    model.doubleIndices.forEach { idx ->
+      input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
+      if (input[idx.name]!! !is Number) throw Exception("${idx.name} type error.")
+      doubleIndices.put(idx, input[idx.name] as Double)
     }
   }
 
   override fun dataInit() {
-    model.columnSet.forEach { col ->
+    model.columns.forEach { col ->
       if (col.name !in input.keys) {
         data.put(col.name, col.default.toString())
       } else if (!col.checkType(input[col.name]!!)) {
@@ -75,16 +78,18 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
   override fun idInit() {}
 
   override fun indicesInit() {
-    model.indexSet.forEach { idx ->
-      when(idx.type) {
-        String::class.java -> stringIndices.put(idx, input[idx.name] as String)
-        else -> doubleIndices.put(idx, input[idx.name] as Double)
-      }
+    model.stringIndices.forEach { idx ->
+      if (input[idx.name]!! !is String) throw Exception("${idx.name} should be String.")
+      stringIndices.put(idx, input[idx.name] as String)
+    }
+    model.doubleIndices.forEach { idx ->
+      if (input[idx.name]!! !is Number) throw Exception("${idx.name} type error.")
+      doubleIndices.put(idx, input[idx.name] as Double)
     }
   }
 
   override fun dataInit() {
-    model.columnSet.forEach { col ->
+    model.columns.forEach { col ->
       if (!col.checkType(input[col.name]!!)) {
         throw Exception("${col.name} type error.")
       }
