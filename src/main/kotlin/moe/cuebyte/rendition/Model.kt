@@ -5,33 +5,32 @@ import moe.cuebyte.rendition.Util.genId
 import moe.cuebyte.rendition.Util.genKey
 import java.util.*
 
-abstract class Model(val name: String) {
+internal data class FuckingFourReturn(
+    val pk:Column,
+    val sIndex: List<Column>,
+    val dIndex: List<Column>,
+    val columns: List<Column>
+)
 
-  /**
-   * This property can only be modified before the Model instance was used.
-   */
-  val schema: MutableMap<String, Column> = HashMap()
+abstract class Model {
+  val name: String
+  val pk: Column
+  val stringIndices: List<Column>
+  val doubleIndices: List<Column>
+  val columns: List<Column>
 
-  internal lateinit var pk: Column
-  internal val columnSet: MutableSet<Column> = HashSet()
-  internal val indexSet: MutableSet<Column> = HashSet // FIXME 两种index
-  private var initialized: Boolean = false
+  constructor(name: String, schema: MutableMap<String, IncompletedColumn>) {
+    this.name = name
+    val (a, b, c, d) = initIndex(schema)
+    pk = a; stringIndices = b; doubleIndices = c; columns = d
+  }
 
-  internal fun initialize() {
-    if (initialized) return
-    if (schema.isEmpty()) {
-      throw Exception("Columns should be initialized first.")
-    }
-
-    schema.forEach {
-      val col = it.value
-      col.name = it.key
-
-      if (col.isIndex) indexSet.add(col)
-      if (col.isPk) handlePk(col)
-      columnSet.add(col)
-    }
-    initialized = true
+  constructor(name: String, body: (MutableMap<String, Column>)->Unit) {
+    this.name = name
+    val schema: MutableMap<String, Column> = HashMap()
+    body(schema)
+    val (a, b, c, d) = initIndex(schema)
+    pk = a; stringIndices = b; doubleIndices = c; columns = d
   }
 
   /**
@@ -39,7 +38,6 @@ abstract class Model(val name: String) {
    * @return id value in string if succeed, else return null
    */
   fun insert(data: Map<String, Any>): String? {
-    initialize()
     val input = InsertData(this, data)
     return commonInsert(input)
   }
@@ -59,14 +57,6 @@ abstract class Model(val name: String) {
     return false
   }
 
-  protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
-  protected fun string(default: String = "") = Column(String::class.java, default)
-  protected fun int(default: Int = 0) = Column(Int::class.java, default)
-  protected fun long(default: Long = 0) = Column(Long::class.java, default)
-  protected fun float(default: Float = 0f) = Column(Float::class.java, default)
-  protected fun double(default: Double = 0.0) = Column(Double::class.java, default)
-
-
   private fun commonInsert(input: InsertData): String? {
     input.init()
 
@@ -84,13 +74,26 @@ abstract class Model(val name: String) {
     // --- END Transaction ---
   }
 
-  private fun handlePk(pk: Column) {
-    if (pk.type == Boolean::class.java) {
-      throw Exception("Primary key can not defined as Boolean")
+  private fun initIndex(schema: Map<String, IncompletedColumn>)
+      : FuckingFourReturn {
+
+    var tPk: Column? = null
+    val tStringIndices: MutableList<Column> = ArrayList()
+    val tDoubleIndices: MutableList<Column> = ArrayList()
+    val tColumns: MutableList<Column> = ArrayList()
+
+    schema.forEach {
+      val col: Column = it.value.complete(it.key)
+      tColumns.add(col)
+      when(col.info) {
+        IncompletedColumn.Info.NONE -> {}
+        IncompletedColumn.Info.STRING_PK -> { tPk = col; tPk!!.automated = false }
+        IncompletedColumn.Info.DOUBLE_PK -> { tPk = col; tDoubleIndices.add(col) }
+        IncompletedColumn.Info.STRING_INDEX -> tStringIndices.add(col)
+        IncompletedColumn.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
+      }
     }
-    if (pk.type != String::class.java) {
-      indexSet.add(pk)
-      pk.automated = false
-    }
+    tPk?:throw Exception("No primary key in schema.")
+    return FuckingFourReturn(tPk!!, tStringIndices, tDoubleIndices, tColumns)
   }
 }
