@@ -56,7 +56,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.doubleIndices.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
       if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      doubleIndices.put(idx, input[idx.name] as Double)
+      doubleIndices.put(idx, (input[idx.name] as Number).toDouble())
     }
   }
 
@@ -87,7 +87,7 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.doubleIndices.forEach { idx ->
       input[idx.name] ?: return
       if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      doubleIndices.put(idx, input[idx.name] as Double)
+      doubleIndices.put(idx, (input[idx.name] as Number).toDouble())
     }
   }
 

@@ -53,8 +53,13 @@ abstract class Model {
   }
 
   fun batchInsert(batch: List<Map<String, Any>>): Boolean {
-    // TODO
-    return false
+    val mInsert = MultiInsertData(this, batch)
+    val id = mInsert.
+    val t = Connection.get().multi()
+    mInsert.batchData.forEach {
+      t.hmset(genId(this, it.))
+    }
+    return !t.exec().isEmpty()
   }
 
   private fun commonInsert(input: InsertData): String? {
