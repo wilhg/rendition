@@ -3,7 +3,7 @@ package moe.cuebyte.rendition
 import moe.cuebyte.rendition.Util.IdGenerator
 import java.util.*
 
-open class InputData(val model: Model, val input: Map<String, Any>){
+open class InputData(val model: Model, val input: Map<String, Any>) {
 
   private var initialized = false
   internal lateinit var id: String
@@ -55,7 +55,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
     }
     model.doubleIndices.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
-      if (input[idx.name]!! !is Number) throw Exception("${idx.name} type error.")
+      if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
       doubleIndices.put(idx, input[idx.name] as Double)
     }
   }
@@ -79,11 +79,14 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
 
   override fun indicesInit() {
     model.stringIndices.forEach { idx ->
-      if (input[idx.name]!! !is String) throw Exception("${idx.name} should be String.")
+      input[idx.name] ?: return
+      if (input[idx.name] !is String) throw Exception("${idx.name} should be String.")
       stringIndices.put(idx, input[idx.name] as String)
+
     }
     model.doubleIndices.forEach { idx ->
-      if (input[idx.name]!! !is Number) throw Exception("${idx.name} type error.")
+      input[idx.name] ?: return
+      if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
       doubleIndices.put(idx, input[idx.name] as Double)
     }
   }
