@@ -86,8 +86,7 @@ abstract class Model {
       val col: Column = it.value.complete(it.key)
       tColumns.add(col)
       when (col.info) {
-        IncompletedColumn.Info.NONE -> {
-        }
+        IncompletedColumn.Info.NONE -> {}
         IncompletedColumn.Info.STRING_PK -> { tPk = col; tPk!!.automated = false }
         IncompletedColumn.Info.DOUBLE_PK -> { tPk = col; tDoubleIndices.add(col) }
         IncompletedColumn.Info.STRING_INDEX -> tStringIndices.add(col)
