@@ -1,6 +1,6 @@
 package moe.cuebyte.rendition
 
-open class IncompletedColumn(val type: Class<*>, val default: Any) {
+open class IncompleteColumn(val type: Class<*>, val default: Any) {
   enum class Info {
     NONE,
     STRING_PK, DOUBLE_PK,
@@ -10,7 +10,7 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
   internal var automated = false
   private var info: Info = Info.NONE
 
-  fun primaryKey(): IncompletedColumn {
+  fun primaryKey(): IncompleteColumn {
     if (info != Info.NONE) {
       throw Exception("a column should only be set as primaryKey or with an index")
     }
@@ -25,7 +25,7 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
     return this
   }
 
-  fun auto(): IncompletedColumn {
+  fun auto(): IncompleteColumn {
     if (info == Info.STRING_PK || info == Info.DOUBLE_PK) {
       throw Exception("Only Id could be generate automatically.")
     }
@@ -36,7 +36,7 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
     return this
   }
 
-  fun index(): IncompletedColumn {
+  fun index(): IncompleteColumn {
     if (info != Info.NONE) {
       throw Exception("a column should only be set as an primaryKey or with an index")
     }
@@ -55,11 +55,11 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
 
 class Column
 internal constructor(val name: String, type: Class<*>, default: Any, val info: Info)
-  : IncompletedColumn(type, default)
+  : IncompleteColumn(type, default)
 
-fun bool(default: Boolean = false) = IncompletedColumn(Boolean::class.java, default)
-fun string(default: String = "") = IncompletedColumn(String::class.java, default)
-fun int(default: Int = 0) = IncompletedColumn(Int::class.java, default)
-fun long(default: Long = 0) = IncompletedColumn(Long::class.java, default)
-fun float(default: Float = 0f) = IncompletedColumn(Float::class.java, default)
-fun double(default: Double = 0.0) = IncompletedColumn(Double::class.java, default)
+fun bool(default: Boolean = false) = IncompleteColumn(Boolean::class.java, default)
+fun string(default: String = "") = IncompleteColumn(String::class.java, default)
+fun int(default: Int = 0) = IncompleteColumn(Int::class.java, default)
+fun long(default: Long = 0) = IncompleteColumn(Long::class.java, default)
+fun float(default: Float = 0f) = IncompleteColumn(Float::class.java, default)
+fun double(default: Double = 0.0) = IncompleteColumn(Double::class.java, default)
