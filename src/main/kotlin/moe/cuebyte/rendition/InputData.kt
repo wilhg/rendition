@@ -9,7 +9,7 @@ open class InputData(val model: Model, val input: Map<String, Any>){
   internal lateinit var id: String
   internal val stringIndices: MutableMap<Column, String> = HashMap()
   internal val doubleIndices: MutableMap<Column, Double> = HashMap()
-  internal val data: MutableMap<Column, String> = HashMap()
+  internal val data: MutableMap<String, String> = HashMap()
 
   open protected fun idInit() {}
   open protected fun indicesInit() {}
@@ -23,11 +23,6 @@ open class InputData(val model: Model, val input: Map<String, Any>){
     indicesInit()
     dataInit()
     initialized = true
-  }
-
-  internal fun encodeData(): Map<String, String> {
-    if (!initialized) throw Exception("Internal error, InputData hasn't been initialized.")
-    return data.mapKeys { it.key.name }
   }
 
   private fun checkColsName(): Boolean {
@@ -55,9 +50,9 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.indexSet.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
       if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      when (input[idx.name]) {
-        is String -> stringIndices.put(idx, input[idx.name] as String)
-        is Number -> doubleIndices.put(idx, input[idx.name] as Double)
+      when(idx.type) {
+        String::class.java -> stringIndices.put(idx, input[idx.name] as String)
+        else -> doubleIndices.put(idx, input[idx.name] as Double)
       }
     }
   }
@@ -65,11 +60,11 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
   override fun dataInit() {
     model.columnSet.forEach { col ->
       if (col.name !in input.keys) {
-        data.put(col, col.default.toString())
+        data.put(col.name, col.default.toString())
       } else if (!col.checkType(input[col.name]!!)) {
         throw Exception("${col.name} type error.")
       } else {
-        data.put(col, input[col.name].toString())
+        data.put(col.name, input[col.name].toString())
       }
     }
   }
@@ -78,11 +73,12 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
 class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input) {
 
   override fun idInit() {}
+
   override fun indicesInit() {
     model.indexSet.forEach { idx ->
-      when (input[idx.name]) {
-        is String -> stringIndices.put(idx, input[idx.name] as String)
-        is Number -> doubleIndices.put(idx, input[idx.name] as Double)
+      when(idx.type) {
+        String::class.java -> stringIndices.put(idx, input[idx.name] as String)
+        else -> doubleIndices.put(idx, input[idx.name] as Double)
       }
     }
   }
@@ -92,7 +88,7 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
       if (!col.checkType(input[col.name]!!)) {
         throw Exception("${col.name} type error.")
       }
-      data.put(col, input[col.name].toString())
+      data.put(col.name, input[col.name].toString())
     }
   }
 }

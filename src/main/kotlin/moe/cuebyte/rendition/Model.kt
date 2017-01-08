@@ -14,7 +14,7 @@ abstract class Model(val name: String) {
 
   internal lateinit var pk: Column
   internal val columnSet: MutableSet<Column> = HashSet()
-  internal val indexSet: MutableSet<Column> = HashSet()
+  internal val indexSet: MutableSet<Column> = HashSet // FIXME 两种index
   private var initialized: Boolean = false
 
   internal fun initialize() {
@@ -54,6 +54,11 @@ abstract class Model(val name: String) {
     return insert(map)
   }
 
+  fun batchInsert(batch: List<Map<String, Any>>): Boolean {
+    // TODO
+    return false
+  }
+
   protected fun bool(default: Boolean = false) = Column(Boolean::class.java, default)
   protected fun string(default: String = "") = Column(String::class.java, default)
   protected fun int(default: Int = 0) = Column(Int::class.java, default)
@@ -68,12 +73,12 @@ abstract class Model(val name: String) {
     val id = input.id
     // --- BEGIN Transaction ---
     val t = Connection.get().multi()
-    t.hmset(genId(this, id), input.encodeData())
+    t.hmset(genId(this, id), input.data)
     input.stringIndices.forEach {
       t.sadd(genKey(this, it.key, it.value), id)
     }
     input.doubleIndices.forEach {
-      t.zadd(genKey(this, it.key), mutableMapOf(id to it.value))
+      t.zadd(genKey(this, it.key), mapOf(id to it.value))
     }
     return if (t.exec().isEmpty()) null else id
     // --- END Transaction ---
