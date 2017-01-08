@@ -1,5 +1,16 @@
 package moe.cuebyte.rendition
 
+class Column
+internal constructor(val name: String, type: Class<*>, default: Any, val info: Info)
+  : IncompleteColumn(type, default)
+
+fun bool(default: Boolean = false) = IncompleteColumn(Boolean::class.java, default)
+fun string(default: String = "") = IncompleteColumn(String::class.java, default)
+fun int(default: Int = 0) = IncompleteColumn(Int::class.java, default)
+fun long(default: Long = 0) = IncompleteColumn(Long::class.java, default)
+fun float(default: Float = 0f) = IncompleteColumn(Float::class.java, default)
+fun double(default: Double = 0.0) = IncompleteColumn(Double::class.java, default)
+
 open class IncompleteColumn(val type: Class<*>, val default: Any) {
   enum class Info {
     NONE,
@@ -52,14 +63,3 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
 
   fun checkType(value: Any) = value.javaClass == type
 }
-
-class Column
-internal constructor(val name: String, type: Class<*>, default: Any, val info: Info)
-  : IncompleteColumn(type, default)
-
-fun bool(default: Boolean = false) = IncompleteColumn(Boolean::class.java, default)
-fun string(default: String = "") = IncompleteColumn(String::class.java, default)
-fun int(default: Int = 0) = IncompleteColumn(Int::class.java, default)
-fun long(default: Long = 0) = IncompleteColumn(Long::class.java, default)
-fun float(default: Float = 0f) = IncompleteColumn(Float::class.java, default)
-fun double(default: Double = 0.0) = IncompleteColumn(Double::class.java, default)
