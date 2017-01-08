@@ -6,7 +6,7 @@ import moe.cuebyte.rendition.Util.genKey
 import java.util.*
 
 internal data class FuckingFourReturn(
-    val pk:Column,
+    val pk: Column,
     val sIndex: List<Column>,
     val dIndex: List<Column>,
     val columns: List<Column>
@@ -85,15 +85,16 @@ abstract class Model {
     schema.forEach {
       val col: Column = it.value.complete(it.key)
       tColumns.add(col)
-      when(col.info) {
-        IncompletedColumn.Info.NONE -> {}
+      when (col.info) {
+        IncompletedColumn.Info.NONE -> {
+        }
         IncompletedColumn.Info.STRING_PK -> { tPk = col; tPk!!.automated = false }
         IncompletedColumn.Info.DOUBLE_PK -> { tPk = col; tDoubleIndices.add(col) }
         IncompletedColumn.Info.STRING_INDEX -> tStringIndices.add(col)
         IncompletedColumn.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
       }
     }
-    tPk?:throw Exception("No primary key in schema.")
+    tPk ?: throw Exception("No primary key in schema.")
     return FuckingFourReturn(tPk!!, tStringIndices, tDoubleIndices, tColumns)
   }
 }

@@ -8,6 +8,7 @@ open class IncompletedColumn(val type: Class<*>, val default: Any) {
     STRING_INDEX,
     DOUBLE_INDEX
   }
+
   private var info: Info = Info.NONE
 
   internal var automated = false
