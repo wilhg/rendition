@@ -54,10 +54,27 @@ abstract class Model {
 
   fun batchInsert(batch: List<Map<String, Any>>): Boolean {
     val mInsert = MultiInsertData(this, batch)
-    val id = mInsert.
     val t = Connection.get().multi()
-    mInsert.batchData.forEach {
-      t.hmset(genId(this, it.))
+    mInsert.batchData.forEach { data ->
+      t.hmset(genId(this, data[this.pk.name]!!), data)
+    }
+    mInsert.batchSIndices.forEach {
+      val col = it.key
+      val idxMap = it.value
+      idxMap.forEach {
+        val idxName = it.key
+        val ids = it.value
+        t.sadd(genKey(this, col, idxName), *ids.toTypedArray())
+      }
+    }
+    mInsert.batchDIndices.forEach {
+      val col = it.key
+      val idxMap = it.value
+      idxMap.forEach {
+        val idxName = it.key
+        val ids = it.value
+        ids.forEach { id -> t.zadd(genKey(this, col), idxName, id) }
+      }
     }
     return !t.exec().isEmpty()
   }
@@ -91,9 +108,14 @@ abstract class Model {
       val col: Column = it.value.complete(it.key)
       tColumns.add(col)
       when (col.info) {
-        IncompleteColumn.Info.NONE -> {}
-        IncompleteColumn.Info.STRING_PK -> { tPk = col; tPk!!.automated = false }
-        IncompleteColumn.Info.DOUBLE_PK -> { tPk = col; tDoubleIndices.add(col) }
+        IncompleteColumn.Info.NONE -> {
+        }
+        IncompleteColumn.Info.STRING_PK -> {
+          tPk = col; tPk!!.automated = false
+        }
+        IncompleteColumn.Info.DOUBLE_PK -> {
+          tPk = col; tDoubleIndices.add(col)
+        }
         IncompleteColumn.Info.STRING_INDEX -> tStringIndices.add(col)
         IncompleteColumn.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
       }

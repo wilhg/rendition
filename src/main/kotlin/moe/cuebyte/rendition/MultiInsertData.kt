@@ -1,52 +1,55 @@
 package moe.cuebyte.rendition
 
-import moe.cuebyte.rendition.Util.IdGenerator
 import java.util.*
 
+/**
+ * The batch input data have to include Id
+ */
+class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
-class MultiInsertData(val model: Model, batchInput: List<MutableMap<String, Any>>) {
-
-  internal val pks: MutableList<String> = LinkedList()
-  internal val batchData: MutableList<Map<String, String>> = LinkedList()
-  internal val batchSIndices: MutableMap<Column, MutableList<String>> = HashMap()
-  internal val batchDIndices: MutableMap<Column, MutableList<Double>> = HashMap()
+  internal val pks: List<String>
+  internal val batchData: List<Map<String, String>>
+  internal val batchSIndices: Map<Column, Map<String, List<String>>>
+  internal val batchDIndices: Map<Column, Map<Double, List<String>>>
 
   init {
+    val tPks: MutableList<String> = LinkedList()
+    val tBatchData: MutableList<Map<String, String>> = LinkedList()
+    val tBatchSIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
+    val tBatchDIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
+
     checkInput(batchInput[0])
+    model.stringIndices.forEach { tBatchSIndices[it] = HashMap() }
+    model.doubleIndices.forEach { tBatchDIndices[it] = HashMap() }
 
     batchInput.forEach { input ->
-      val pkName = model.pk.name
-      input[pkName] = handleId(input[pkName])
       val okInput: Map<String, String> = model.columns
           .map { it.name to (input[it.name] ?: it.default).toString() }
           .toMap()
 
-      pks.add(okInput[pkName]!!.toString())
-      batchData.add(okInput)
-      model.stringIndices.forEach {
-        if (batchSIndices[it] == null) batchSIndices[it] = LinkedList()
-        batchSIndices[it]!!.add(okInput[it.name]!!)
+      tPks.add(okInput[model.pk.name]!!.toString())
+      tBatchData.add(okInput)
+      tBatchSIndices.forEach {
+        val idxMap = it.value
+        val idxValue = okInput[it.key.name]!!
+        if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
+        idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
-      model.doubleIndices.forEach {
-        if (batchDIndices[it] == null) batchDIndices[it] = LinkedList()
-        batchDIndices[it]!!.add(okInput[it.name]!!.toDouble())
+      tBatchDIndices.forEach {
+        val idxMap = it.value
+        val idxValue = okInput[it.key.name]!!.toDouble()
+        if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
+        idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
     }
-  }
 
-  private fun handleId(value: Any?): Any {
-    val pk = model.pk
-
-    if (pk.automated) return IdGenerator.next()
-    if (value == null || value == "") throw Exception("Id has not defined.")
-    if (model.pk.checkType(value)) throw Exception("Id type was error.")
-
-    return value
+    pks = tPks; batchData = tBatchData; batchSIndices = tBatchSIndices; batchDIndices = tBatchDIndices
   }
 
   private fun checkInput(input: Map<String, Any>) {
     if (!checkColsName(input)) throw Exception("Data do not match the schema.")
-
+    if (input[model.pk.name] == null) throw Exception("In batchInsert, Id must be set. " +
+        "No matter weather the automated was true")
     if (!model.columns.all {
       input[it.name] == null || it.checkType(input[it.name]!!)
     }) {
@@ -59,5 +62,4 @@ class MultiInsertData(val model: Model, batchInput: List<MutableMap<String, Any>
     tmpSet.removeAll(model.columns.map { it.name })
     return tmpSet.isEmpty()
   }
-
 }
