@@ -38,14 +38,14 @@ abstract class Model {
     val tDoubleIndices: MutableList<Column> = ArrayList()
     val tColumns: MutableList<Column> = ArrayList()
 
-    schema.forEach {
-      val col: Column = it.value.complete(it.key)
+    for ((name, _col) in schema) {
+      val col: Column = _col.complete(name)
       tColumns.add(col)
       when (col.info) {
         IncompleteColumn.Info.NONE -> {
         }
         IncompleteColumn.Info.STRING_PK -> {
-          tPk = col; tPk!!.automated = false
+          tPk = col; tPk.automated = false
         }
         IncompleteColumn.Info.DOUBLE_PK -> {
           tPk = col; tDoubleIndices.add(col)
@@ -55,6 +55,6 @@ abstract class Model {
       }
     }
     tPk ?: throw Exception("No primary key in schema.")
-    return FoolFourReturn(tPk!!, tStringIndices, tDoubleIndices, tColumns)
+    return FoolFourReturn(tPk, tStringIndices, tDoubleIndices, tColumns)
   }
 }

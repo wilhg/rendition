@@ -30,11 +30,11 @@ private fun <T : Model> T.commonInsert(data: InsertData): String? {
   // --- BEGIN Transaction ---
   val t = Connection.get().multi()
   t.hmset(genId(this, id), data.body)
-  data.strIndices.forEach {
-    t.sadd(genKey(this, it.key, it.value), id)
+  for ((col, value) in data.strIndices) {
+    t.sadd(genKey(this, col, value), id)
   }
-  data.numIndices.forEach {
-    t.zadd(genKey(this, it.key), mapOf(id to it.value))
+  for ((col, value) in data.numIndices) {
+    t.zadd(genKey(this, col), value, id)
   }
   return if (t.exec().isEmpty()) null else id
   // --- END Transaction ---

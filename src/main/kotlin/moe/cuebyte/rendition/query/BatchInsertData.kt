@@ -26,22 +26,20 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
     model.stringIndices.forEach { tbStrIndices[it] = HashMap() }
     model.doubleIndices.forEach { tbNumIndices[it] = HashMap() }
 
-    batchInput.forEach { input ->
+    for (input in batchInput) {
       val okInput: Map<String, String> = model.columns
           .map { it.name to (input[it.name] ?: it.default).toString() }
           .toMap()
 
       tPks.add(okInput[model.pk.name]!!.toString())
       tbBody.add(okInput)
-      tbStrIndices.forEach {
-        val idxMap = it.value
-        val idxValue = okInput[it.key.name]!!
+      for ((col, idxMap) in tbStrIndices) {
+        val idxValue = okInput[col.name]!!
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
-      tbNumIndices.forEach {
-        val idxMap = it.value
-        val idxValue = okInput[it.key.name]!!.toDouble()
+      for ((col, idxMap) in tbNumIndices) {
+        val idxValue = okInput[col.name]!!.toDouble()
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
