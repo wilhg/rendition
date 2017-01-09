@@ -1,5 +1,7 @@
-package moe.cuebyte.rendition
+package moe.cuebyte.rendition.query
 
+import moe.cuebyte.rendition.Column
+import moe.cuebyte.rendition.Model
 import moe.cuebyte.rendition.util.IdGenerator
 import java.util.HashMap
 

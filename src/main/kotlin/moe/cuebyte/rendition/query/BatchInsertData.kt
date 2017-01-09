@@ -1,11 +1,13 @@
-package moe.cuebyte.rendition
+package moe.cuebyte.rendition.query
 
+import moe.cuebyte.rendition.Column
+import moe.cuebyte.rendition.Model
 import java.util.*
 
 /**
  * The batch input body have to include Id
  */
-class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
+class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
   internal val pks: List<String>
   internal val batchBody: List<Map<String, String>>
