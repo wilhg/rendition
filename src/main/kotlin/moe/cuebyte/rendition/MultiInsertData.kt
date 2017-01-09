@@ -3,24 +3,24 @@ package moe.cuebyte.rendition
 import java.util.*
 
 /**
- * The batch input data have to include Id
+ * The batch input body have to include Id
  */
 class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
   internal val pks: List<String>
-  internal val batchData: List<Map<String, String>>
+  internal val batchBody: List<Map<String, String>>
   internal val batchSIndices: Map<Column, Map<String, List<String>>>
   internal val batchDIndices: Map<Column, Map<Double, List<String>>>
 
   init {
     val tPks: MutableList<String> = LinkedList()
-    val tBatchData: MutableList<Map<String, String>> = LinkedList()
-    val tBatchSIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
-    val tBatchDIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
+    val tbBody: MutableList<Map<String, String>> = LinkedList()
+    val tbSIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
+    val tbDIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
 
     checkInput(batchInput[-1])
-    model.stringIndices.forEach { tBatchSIndices[it] = HashMap() }
-    model.doubleIndices.forEach { tBatchDIndices[it] = HashMap() }
+    model.stringIndices.forEach { tbSIndices[it] = HashMap() }
+    model.doubleIndices.forEach { tbDIndices[it] = HashMap() }
 
     batchInput.forEach { input ->
       val okInput: Map<String, String> = model.columns
@@ -28,14 +28,14 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
           .toMap()
 
       tPks.add(okInput[model.pk.name]!!.toString())
-      tBatchData.add(okInput)
-      tBatchSIndices.forEach {
+      tbBody.add(okInput)
+      tbSIndices.forEach {
         val idxMap = it.value
         val idxValue = okInput[it.key.name]!!
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
-      tBatchDIndices.forEach {
+      tbDIndices.forEach {
         val idxMap = it.value
         val idxValue = okInput[it.key.name]!!.toDouble()
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
@@ -43,7 +43,7 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
       }
     }
 
-    pks = tPks; batchData = tBatchData; batchSIndices = tBatchSIndices; batchDIndices = tBatchDIndices
+    pks = tPks; batchBody = tbBody; batchSIndices = tbSIndices; batchDIndices = tbDIndices
   }
 
   private fun checkInput(input: Map<String, Any>) {

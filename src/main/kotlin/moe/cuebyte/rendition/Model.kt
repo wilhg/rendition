@@ -5,7 +5,7 @@ import moe.cuebyte.rendition.Util.genId
 import moe.cuebyte.rendition.Util.genKey
 import java.util.*
 
-internal data class FuckingFourReturn(
+internal data class FoolFourReturn(
     val pk: Column,
     val sIndex: List<Column>,
     val dIndex: List<Column>,
@@ -55,7 +55,7 @@ abstract class Model {
   fun batchInsert(batch: List<Map<String, Any>>): Boolean {
     val mInsert = MultiInsertData(this, batch)
     val t = Connection.get().multi()
-    mInsert.batchData.forEach { data ->
+    mInsert.batchBody.forEach { data ->
       t.hmset(genId(this, data[this.pk.name]!!), data)
     }
     mInsert.batchSIndices.forEach {
@@ -79,26 +79,22 @@ abstract class Model {
     return !t.exec().isEmpty()
   }
 
-  private fun commonInsert(input: InsertData): String? {
-    input.init()
-
-    val id = input.id
+  private fun commonInsert(data: InsertData): String? {
+    val id = data.id
     // --- BEGIN Transaction ---
     val t = Connection.get().multi()
-    t.hmset(genId(this, id), input.data)
-    input.stringIndices.forEach {
+    t.hmset(genId(this, id), data.body)
+    data.stringIndices.forEach {
       t.sadd(genKey(this, it.key, it.value), id)
     }
-    input.doubleIndices.forEach {
+    data.doubleIndices.forEach {
       t.zadd(genKey(this, it.key), mapOf(id to it.value))
     }
     return if (t.exec().isEmpty()) null else id
     // --- END Transaction ---
   }
 
-  private fun initIndex(schema: Map<String, IncompleteColumn>)
-      : FuckingFourReturn {
-
+  private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
     var tPk: Column? = null
     val tStringIndices: MutableList<Column> = ArrayList()
     val tDoubleIndices: MutableList<Column> = ArrayList()
@@ -121,6 +117,6 @@ abstract class Model {
       }
     }
     tPk ?: throw Exception("No primary key in schema.")
-    return FuckingFourReturn(tPk!!, tStringIndices, tDoubleIndices, tColumns)
+    return FoolFourReturn(tPk!!, tStringIndices, tDoubleIndices, tColumns)
   }
 }
