@@ -1,4 +1,4 @@
-package moe.cuebyte.rendition.Util
+package moe.cuebyte.rendition.util
 
 import java.math.BigInteger
 import java.security.SecureRandom

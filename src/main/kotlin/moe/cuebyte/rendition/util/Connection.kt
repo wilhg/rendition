@@ -1,4 +1,4 @@
-package moe.cuebyte.rendition.Util
+package moe.cuebyte.rendition.util
 
 import redis.clients.jedis.*
 
@@ -19,8 +19,8 @@ object Connection {
   }
 
   fun get(): Jedis {
-    if (conn != null) return conn!!
     if (pool != null) return pool!!.resource
+    if (conn != null) return conn!!
     throw Exception("The connection has not been initialized.")
   }
 }

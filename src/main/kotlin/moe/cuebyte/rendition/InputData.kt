@@ -1,6 +1,6 @@
 package moe.cuebyte.rendition
 
-import moe.cuebyte.rendition.Util.IdGenerator
+import moe.cuebyte.rendition.util.IdGenerator
 import java.util.HashMap
 
 @Suppress("LeakingThis")

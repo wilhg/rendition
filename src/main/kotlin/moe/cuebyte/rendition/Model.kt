@@ -1,8 +1,8 @@
 package moe.cuebyte.rendition
 
-import moe.cuebyte.rendition.Util.Connection
-import moe.cuebyte.rendition.Util.genId
-import moe.cuebyte.rendition.Util.genKey
+import moe.cuebyte.rendition.util.Connection
+import moe.cuebyte.rendition.util.genId
+import moe.cuebyte.rendition.util.genKey
 import java.util.*
 
 internal data class FoolFourReturn(
@@ -25,10 +25,10 @@ abstract class Model {
     pk = a; stringIndices = b; doubleIndices = c; columns = d
   }
 
-  constructor(name: String, body: (MutableMap<String, Column>)->Unit) {
+  constructor(name: String, body: (MutableMap<String, IncompleteColumn>)->Unit) {
     this.name = name
-    val schema: MutableMap<String, Column> = HashMap()
-    body(schema)
+    val schema: MutableMap<String, IncompleteColumn> = HashMap()
+    println(schema.keys.isEmpty())
     val (a, b, c, d) = initIndex(schema)
     pk = a; stringIndices = b; doubleIndices = c; columns = d
   }
