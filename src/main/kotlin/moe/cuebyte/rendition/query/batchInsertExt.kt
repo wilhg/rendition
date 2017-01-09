@@ -6,18 +6,19 @@ import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
 
 fun <T : Model> T.batchInsert(batch: List<Map<String, Any>>): Boolean {
-  val mInsert = BatchInsertData(this, batch)
+  val bInsert = BatchInsertData(this, batch)
   val t = Connection.get().multi()
-  mInsert.batchBody.forEach { data ->
-    t.hmset(genId(this, data[this.pk.name]!!), data)
+  
+  for (body in bInsert.batchBody) {
+    t.hmset(genId(this, body[this.pk.name]!!), body)
   }
-  for ((col, idMap) in mInsert.batchStrIndices) {
-    for ((idxName, ids) in idMap) {
+  for ((col, idsMap) in bInsert.batchStrIndices) {
+    for ((idxName, ids) in idsMap) {
       t.sadd(genKey(this, col, idxName), *ids.toTypedArray())
     }
   }
-  for ((col, idMap) in mInsert.batchNumIndices) {
-    for ((idxName, ids) in idMap) {
+  for ((col, idsMap) in bInsert.batchNumIndices) {
+    for ((idxName, ids) in idsMap) {
       ids.forEach { t.zadd(genKey(this, col), idxName, it) }
     }
   }

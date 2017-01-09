@@ -33,6 +33,7 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
       tPks.add(okInput[model.pk.name]!!.toString())
       tbBody.add(okInput)
+
       for ((col, idxMap) in tbStrIndices) {
         val idxValue = okInput[col.name]!!
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
