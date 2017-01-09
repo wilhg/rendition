@@ -18,7 +18,7 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
     val tBatchSIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
     val tBatchDIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
 
-    checkInput(batchInput[0])
+    checkInput(batchInput[-1])
     model.stringIndices.forEach { tBatchSIndices[it] = HashMap() }
     model.doubleIndices.forEach { tBatchDIndices[it] = HashMap() }
 
@@ -48,8 +48,9 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
   private fun checkInput(input: Map<String, Any>) {
     if (!checkColsName(input)) throw Exception("Data do not match the schema.")
-    if (input[model.pk.name] == null) throw Exception("In batchInsert, Id must be set. " +
-        "No matter weather the automated was true")
+    if (input[model.pk.name] == null) {
+      throw Exception("In batchInsert, Id must be set. No matter weather the automated was true")
+    }
     if (!model.columns.all {
       input[it.name] == null || it.checkType(input[it.name]!!)
     }) {
