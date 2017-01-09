@@ -1,20 +1,20 @@
 package moe.cuebyte.rendition
 
 import moe.cuebyte.rendition.Util.IdGenerator
-import java.util.*
+import java.util.HashMap
 
 @Suppress("LeakingThis")
 open class InputData(val model: Model, input: Map<String, Any>) {
 
   internal val id: String
   internal val body: Map<String, String>
-  internal val stringIndices: Map<Column, String>
-  internal val doubleIndices: Map<Column, Double>
+  internal val strIndices: Map<Column, String>
+  internal val numIndices: Map<Column, Double> // Jedis score is Double
 
   protected var tId: String = ""
-  protected val tsi: MutableMap<Column, String> = HashMap()
-  protected val tdi: MutableMap<Column, Double> = HashMap()
   protected val tBody: MutableMap<String, String> = HashMap()
+  protected val tStrIndices: MutableMap<Column, String> = HashMap()
+  protected val tNumIndices: MutableMap<Column, Double> = HashMap()
 
   open protected fun idInit(input: Map<String, Any>) {}
   open protected fun indicesInit(input: Map<String, Any>) {}
@@ -27,7 +27,7 @@ open class InputData(val model: Model, input: Map<String, Any>) {
     idInit(input)
     indicesInit(input)
     dataInit(input)
-    id = tId; stringIndices = tsi; doubleIndices = tdi; body = tBody
+    id = tId; strIndices = tStrIndices; numIndices = tNumIndices; body = tBody
   }
 
   private fun checkColsName(input: Map<String, Any>): Boolean {
@@ -56,12 +56,12 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.stringIndices.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
       if (input[idx.name]!! !is String) throw Exception("${idx.name} should be String.")
-      tsi.put(idx, input[idx.name] as String)
+      tStrIndices.put(idx, input[idx.name] as String)
     }
     model.doubleIndices.forEach { idx ->
       input[idx.name] ?: throw Exception("Index-${idx.name} shall be defined.")
       if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      tdi.put(idx, (input[idx.name] as Number).toDouble())
+      tNumIndices.put(idx, (input[idx.name] as Number).toDouble())
     }
   }
 
@@ -90,12 +90,12 @@ class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input
     model.stringIndices.forEach { idx ->
       input[idx.name] ?: return
       if (input[idx.name] !is String) throw Exception("${idx.name} should be String.")
-      tsi.put(idx, input[idx.name] as String)
+      tStrIndices.put(idx, input[idx.name] as String)
     }
     model.doubleIndices.forEach { idx ->
       input[idx.name] ?: return
       if (!idx.checkType(input[idx.name]!!)) throw Exception("${idx.name} type error.")
-      tdi.put(idx, (input[idx.name] as Number).toDouble())
+      tNumIndices.put(idx, (input[idx.name] as Number).toDouble())
     }
   }
 

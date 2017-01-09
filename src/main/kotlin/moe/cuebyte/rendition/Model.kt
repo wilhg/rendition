@@ -58,7 +58,7 @@ abstract class Model {
     mInsert.batchBody.forEach { data ->
       t.hmset(genId(this, data[this.pk.name]!!), data)
     }
-    mInsert.batchSIndices.forEach {
+    mInsert.batchStrIndices.forEach {
       val col = it.key
       val idxMap = it.value
       idxMap.forEach {
@@ -67,7 +67,7 @@ abstract class Model {
         t.sadd(genKey(this, col, idxName), *ids.toTypedArray())
       }
     }
-    mInsert.batchDIndices.forEach {
+    mInsert.batchNumIndices.forEach {
       val col = it.key
       val idxMap = it.value
       idxMap.forEach {
@@ -84,10 +84,10 @@ abstract class Model {
     // --- BEGIN Transaction ---
     val t = Connection.get().multi()
     t.hmset(genId(this, id), data.body)
-    data.stringIndices.forEach {
+    data.strIndices.forEach {
       t.sadd(genKey(this, it.key, it.value), id)
     }
-    data.doubleIndices.forEach {
+    data.numIndices.forEach {
       t.zadd(genKey(this, it.key), mapOf(id to it.value))
     }
     return if (t.exec().isEmpty()) null else id

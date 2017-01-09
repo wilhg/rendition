@@ -9,18 +9,20 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
   internal val pks: List<String>
   internal val batchBody: List<Map<String, String>>
-  internal val batchSIndices: Map<Column, Map<String, List<String>>>
-  internal val batchDIndices: Map<Column, Map<Double, List<String>>>
+  internal val batchStrIndices: Map<Column, Map<String, List<String>>>
+  internal val batchNumIndices: Map<Column, Map<Double, List<String>>>
 
   init {
+    // `t` = template
+    // `b` = batch
     val tPks: MutableList<String> = LinkedList()
     val tbBody: MutableList<Map<String, String>> = LinkedList()
-    val tbSIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
-    val tbDIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
+    val tbStrIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
+    val tbNumIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
 
     checkInput(batchInput[-1])
-    model.stringIndices.forEach { tbSIndices[it] = HashMap() }
-    model.doubleIndices.forEach { tbDIndices[it] = HashMap() }
+    model.stringIndices.forEach { tbStrIndices[it] = HashMap() }
+    model.doubleIndices.forEach { tbNumIndices[it] = HashMap() }
 
     batchInput.forEach { input ->
       val okInput: Map<String, String> = model.columns
@@ -29,13 +31,13 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
       tPks.add(okInput[model.pk.name]!!.toString())
       tbBody.add(okInput)
-      tbSIndices.forEach {
+      tbStrIndices.forEach {
         val idxMap = it.value
         val idxValue = okInput[it.key.name]!!
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
-      tbDIndices.forEach {
+      tbNumIndices.forEach {
         val idxMap = it.value
         val idxValue = okInput[it.key.name]!!.toDouble()
         if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
@@ -43,7 +45,7 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
       }
     }
 
-    pks = tPks; batchBody = tbBody; batchSIndices = tbSIndices; batchDIndices = tbDIndices
+    pks = tPks; batchBody = tbBody; batchStrIndices = tbStrIndices; batchNumIndices = tbNumIndices
   }
 
   private fun checkInput(input: Map<String, Any>) {
@@ -59,8 +61,8 @@ class MultiInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
   }
 
   private fun checkColsName(input: Map<String, Any>): Boolean {
-    val tmpSet = input.keys.toHashSet()
-    tmpSet.removeAll(model.columns.map { it.name })
-    return tmpSet.isEmpty()
+    val inputKeys = input.keys.toHashSet()
+    inputKeys.removeAll(model.columns.map { it.name })
+    return inputKeys.isEmpty()
   }
 }
