@@ -8,13 +8,9 @@ import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-object ColumnSpec : Spek({
+object IncompleteColumnSpec : Spek({
   describe("incomplete column") {
     on("set type") {
-      it("should be string type") {
-        assertEquals(string().type, String::class.java)
-        assertEquals(string().default, "")
-      }
       it("should be int type") {
         assertEquals(int().type, Int::class.java)
         assertEquals(int().default, 0)
@@ -31,31 +27,28 @@ object ColumnSpec : Spek({
         assertEquals(double().type, Double::class.java)
         assertEquals(double().default, 0.0)
       }
+      it("should be string type") {
+        assertEquals(string().type, String::class.java)
+        assertEquals(string().default, "")
+      }
     }
 
     it("should be ok with complete") {
-      assertTrue(int().complete("") is Column)
+      val col = int().complete("name")
+      assertTrue(col is Column)
+      assertEquals(col.name, "name")
     }
+  }
+})
 
+object ColumnSpec : Spek({
+  describe("columns") {
     it("should be ok with checkType") {
-      assertTrue(int().checkType(0))
-      assertTrue(long().checkType(0L))
-      assertTrue(float().checkType(0f))
-      assertTrue(double().checkType(0.0))
-      assertTrue(string().checkType("猫"))
+      assertTrue(int().complete("").checkType(0))
+      assertTrue(long().complete("").checkType(0L))
+      assertTrue(float().complete("").checkType(0f))
+      assertTrue(double().complete("").checkType(0.0))
+      assertTrue(string().complete("").checkType("喵"))
     }
   }
-  describe("id init") {
-    it("string id") {
-    }
-    on("automated") {}
-    on("number id") {}
-  }
-
-  describe("index init") {
-    on("string index") {}
-    on("number index") {}
-  }
-
-  describe("data init") {}
 })
