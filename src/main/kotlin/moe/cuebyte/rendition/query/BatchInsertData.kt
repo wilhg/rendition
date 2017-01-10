@@ -8,7 +8,6 @@ import java.util.*
  * The batch input body have to include Id
  */
 class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
-
   internal val pks: List<String>
   internal val batchBody: List<Map<String, String>>
   internal val batchStrIndices: Map<Column, Map<String, List<String>>>

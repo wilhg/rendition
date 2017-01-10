@@ -42,16 +42,16 @@ abstract class Model {
       val col: Column = _col.complete(name)
       tColumns.add(col)
       when (col.info) {
-        IncompleteColumn.Info.NONE -> {
+        Column.Info.NONE -> {
         }
-        IncompleteColumn.Info.STRING_PK -> {
+        Column.Info.STRING_PK -> {
           tPk = col; tPk.automated = false
         }
-        IncompleteColumn.Info.DOUBLE_PK -> {
+        Column.Info.DOUBLE_PK -> {
           tPk = col; tDoubleIndices.add(col)
         }
-        IncompleteColumn.Info.STRING_INDEX -> tStringIndices.add(col)
-        IncompleteColumn.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
+        Column.Info.STRING_INDEX -> tStringIndices.add(col)
+        Column.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
       }
     }
     tPk ?: throw Exception("No primary key in schema.")
