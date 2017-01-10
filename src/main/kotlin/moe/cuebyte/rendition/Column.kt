@@ -55,5 +55,14 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
 
   fun complete(name: String): Column = Column(name, this.type, this.default, info, automated)
 
-  fun checkType(value: Any) = value.javaClass == type
+  fun checkType(value: Any): Boolean {
+    return when (value) {
+      is String -> type == String::class.java
+      is Double -> type == Double::class.java
+      is Int -> type == Int::class.java
+      is Long -> type == Long::class.java
+      is Float -> type == Float::class.java
+      else -> false
+    }
+  }
 }
