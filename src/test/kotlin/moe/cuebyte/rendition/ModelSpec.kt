@@ -12,6 +12,11 @@ object StringID : Model("Book", {
 })
 
 object ModelSpec : Spek({
+  describe("init succeed") {
+    it("") {
+      assert(StringID.columns.isNotEmpty())
+    }
+  }
   describe("id init") {
     on("string id") {
       it("") {

@@ -26,6 +26,7 @@ abstract class Model {
   constructor(name: String, body: (MutableMap<String, IncompleteColumn>)->Unit) {
     this.name = name
     val schema: MutableMap<String, IncompleteColumn> = HashMap()
+    body(schema)
     println(schema.keys.isEmpty())
     val (a, b, c, d) = initIndex(schema)
     pk = a; stringIndices = b; doubleIndices = c; columns = d
