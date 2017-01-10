@@ -13,21 +13,6 @@ object StringID : Model("Book", {
 })
 
 object ModelSpec : Spek({
-  describe("id init") {
-    it("string id") {
-      assertEquals(StringID.pk.info, Column.Info.STRING_PK)
-      assertTrue(StringID.pk.automated)
-    }
-    on("automated") {}
-    on("number id") {}
-  }
-
-  describe("index init") {
-    on("string index") {}
-    on("number index") {}
-  }
-
-  describe("data init") {}
 
   describe("insert") {}
 

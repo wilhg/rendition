@@ -1,7 +1,7 @@
 package moe.cuebyte.rendition
 
 class Column
-internal constructor(val name: String, type: Class<*>, default: Any, val info: Info)
+internal constructor(val name: String, type: Class<*>, default: Any, val info: Info, val automated: Boolean)
   : IncompleteColumn(type, default) {
   enum class Info {
     NONE,
@@ -12,8 +12,7 @@ internal constructor(val name: String, type: Class<*>, default: Any, val info: I
 
 open class IncompleteColumn(val type: Class<*>, val default: Any) {
 
-
-  internal var automated = false
+  private var automated = false
   private var info: Column.Info = Column.Info.NONE
 
   fun primaryKey(): IncompleteColumn {
@@ -32,7 +31,7 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
   }
 
   fun auto(): IncompleteColumn {
-    if (info == Column.Info.STRING_PK || info == Column.Info.DOUBLE_PK) {
+    if (info !in arrayOf(Column.Info.STRING_PK, Column.Info.DOUBLE_PK)) {
       throw Exception("Only Id could be generate automatically.")
     }
     if (type == Boolean::class.java) {
@@ -54,7 +53,7 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
     return this
   }
 
-  fun complete(name: String): Column = Column(name, this.type, this.default, info)
+  fun complete(name: String): Column = Column(name, this.type, this.default, info, automated)
 
   fun checkType(value: Any) = value.javaClass == type
 }

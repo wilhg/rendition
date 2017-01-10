@@ -27,7 +27,6 @@ abstract class Model {
     this.name = name
     val schema: MutableMap<String, IncompleteColumn> = HashMap()
     body(schema)
-    println(schema.keys.isEmpty())
     val (a, b, c, d) = initIndex(schema)
     pk = a; stringIndices = b; doubleIndices = c; columns = d
   }
@@ -46,7 +45,7 @@ abstract class Model {
         Column.Info.NONE -> {
         }
         Column.Info.STRING_PK -> {
-          tPk = col; tPk.automated = false
+          tPk = col;
         }
         Column.Info.DOUBLE_PK -> {
           tPk = col; tDoubleIndices.add(col)
