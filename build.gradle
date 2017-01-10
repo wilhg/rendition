@@ -38,6 +38,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
     testCompile 'org.jetbrains.spek:spek-api:1.1.0-beta3'
     testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.0-beta3'
