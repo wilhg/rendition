@@ -45,9 +45,6 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
     if (info !in arrayOf(Column.Info.STRING_PK, Column.Info.DOUBLE_PK)) {
       throw Exception("Only Id could be generate automatically.")
     }
-    if (type == Boolean::class.java) {
-      throw Exception("Index could not be bool.")
-    }
     automated = true
     return this
   }
@@ -55,6 +52,9 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
   fun index(): IncompleteColumn {
     if (info != Column.Info.NONE) {
       throw Exception("a column should only be set as an primaryKey or with an index")
+    }
+    if (type == Boolean::class.java) {
+      throw Exception("Index could not be bool.")
     }
     info = if (type == String::class.java) {
       Column.Info.STRING_INDEX

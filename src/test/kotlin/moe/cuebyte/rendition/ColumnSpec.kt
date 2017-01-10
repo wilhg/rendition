@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 object IncompleteColumnSpec : Spek({
@@ -37,6 +38,17 @@ object IncompleteColumnSpec : Spek({
       val col = int().complete("name")
       assertTrue(col is Column)
       assertEquals(col.name, "name")
+    }
+
+    on("exception check") {
+      it("should throw exception when") {
+        assertFails { int().primaryKey().index() }
+        assertFails { int().index().primaryKey() }
+        assertFails { int().index().auto() }
+        assertFails { int().auto() }
+        assertFails { bool().primaryKey() }
+        assertFails { bool().index() }
+      }
     }
   }
 })
