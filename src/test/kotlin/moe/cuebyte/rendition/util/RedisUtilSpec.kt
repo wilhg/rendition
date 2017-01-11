@@ -9,8 +9,9 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
+
 object Book : Model("book", {
-  it["id"] = int().primaryKey().auto()
+  it["id"] = string().primaryKey().auto()
   it["author"] = string().index()
   it["publish"] = string().index()
   it["words"] = long().index()
@@ -18,17 +19,18 @@ object Book : Model("book", {
   it["introduce"] = string()
   it["date"] = string()
 })
+
 object RedisUtilSpec : Spek({
   describe("RedisUtilSpec") {
     on("gen key or id") {
       it("gen id") {
         assertEquals(genId(Book, "abc"), "${Book.name}:abc")
       }
-      it("gen key") {
-        assertEquals(genKey(Book, Book.columns[0]), "${Book.name}:${Book.columns[0]}")
+      it("gen hash key") {
+        assertEquals(genKey(Book, Book.stringIndices[0], "Shakes"), "book:author:Shakes")
       }
-      it("gen key2") {
-        assertEquals(genKey(Book, Book.columns[0], "abc"), "${Book.name}:${Book.columns[0]}:abc")
+      it("gen sorted set key") {
+        assertEquals(genKey(Book, Book.doubleIndices[0]), "book:words")
       }
     }
   }

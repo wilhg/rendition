@@ -8,23 +8,18 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 object ModelSpec : Spek({
   describe("model property") {
     on("basic") {
-      it("'s name should be ok") { assertEquals(Book.name, "book") }
-      it("'s pk should be ok") {
-      }
-      it("'s stringIndices should be ok") { assertEquals(Book.name, "book") }
-      it("'s numberIndices should be ok") { assertEquals(Book.name, "book") }
-      it("'s columns should be ok") { assertEquals(Book.name, "book") }
     }
   }
 })
 
 
 object Book : Model("book", {
-  it["id"] = int().primaryKey().auto()
+  it["id"] = string().primaryKey().auto()
   it["author"] = string().index()
   it["publish"] = string().index()
   it["words"] = long().index()
