@@ -5,6 +5,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import java.math.BigDecimal
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
@@ -104,6 +105,7 @@ object ColumnSpec : Spek({
         assertTrue(float().complete("").checkType(0f))
         assertTrue(double().complete("").checkType(0.0))
         assertTrue(string().complete("").checkType("喵"))
+        assertFalse(string().complete("").checkType(BigDecimal(1)))
       }
     }
   }

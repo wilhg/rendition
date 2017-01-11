@@ -7,8 +7,7 @@ internal data class FoolFourReturn(
     val pk: Column,
     val sIndex: List<Column>,
     val dIndex: List<Column>,
-    val columns: List<Column>
-)
+    val columns: List<Column>)
 
 abstract class Model {
   val name: String
@@ -17,7 +16,7 @@ abstract class Model {
   val doubleIndices: List<Column>
   val columns: List<Column>
 
-  constructor(name: String, schema: MutableMap<String, IncompleteColumn>) {
+  constructor(name: String, schema: Map<String, IncompleteColumn>) {
     this.name = name
     val (a, b, c, d) = initIndex(schema)
     pk = a; stringIndices = b; doubleIndices = c; columns = d

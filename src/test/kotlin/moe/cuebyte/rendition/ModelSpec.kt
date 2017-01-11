@@ -8,11 +8,35 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 object ModelSpec : Spek({
-  describe("model property") {
-    on("basic") {
+  describe("model") {
+    on("construct") {
+      it("init with function") { Book }
+      it("init with map") { Book2 }
+    }
+
+    on("properties") {
+      it("is pk") {
+        assertEquals(Book.pk.name, "id")
+      }
+      it("is string indices") {
+        assertTrue { "author" in Book.stringIndices.map { it.name } }
+        assertFalse { "words" in Book.stringIndices.map { it.name } }
+      }
+      it("is number indices") {
+        assertTrue { "id" in Book2.doubleIndices.map { it.name } }
+        assertFalse { "id" in Book.doubleIndices.map { it.name } }
+
+        assertTrue { "words" in Book.doubleIndices.map { it.name } }
+        assertFalse { "author" in Book.doubleIndices.map { it.name } }
+      }
+      it("is columns") {
+        assertTrue { "id" in Book.columns.map { it.name } }
+        assertTrue { "date" in Book.columns.map { it.name } }
+      }
     }
   }
 })
@@ -27,3 +51,13 @@ object Book : Model("book", {
   it["introduce"] = string()
   it["date"] = string()
 })
+
+object Book2 : Model("book", mapOf(
+    "id" to int().primaryKey(),
+    "author" to string().index(),
+    "publish" to string().index(),
+    "words" to long().index(),
+    "sales" to long().index(),
+    "introduce" to string(),
+    "date" to string()
+))
