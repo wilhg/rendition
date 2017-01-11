@@ -5,8 +5,8 @@ internal constructor(val name: String, type: Class<*>, default: Any, val info: I
   : IncompleteColumn(type, default) {
   enum class Info {
     NONE,
-    STRING_PK, DOUBLE_PK,
-    STRING_INDEX, DOUBLE_INDEX
+    STRING_PK, NUMBER_PK,
+    STRING_INDEX, NUMBER_INDEX
   }
 
   fun checkType(value: Any): Boolean {
@@ -36,14 +36,14 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
     info = if (type == String::class.java) {
       Column.Info.STRING_PK
     } else {
-      Column.Info.DOUBLE_PK
+      Column.Info.NUMBER_PK
     }
     return this
   }
 
   fun auto(): IncompleteColumn {
-    if (info !in arrayOf(Column.Info.STRING_PK, Column.Info.DOUBLE_PK)) {
-      throw Exception("Only Id could be generate automatically.")
+    if (info != Column.Info.STRING_PK) {
+      throw Exception("Only String Id could be generate automatically.")
     }
     automated = true
     return this
@@ -59,7 +59,7 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
     info = if (type == String::class.java) {
       Column.Info.STRING_INDEX
     } else {
-      Column.Info.DOUBLE_INDEX
+      Column.Info.NUMBER_INDEX
     }
     return this
   }

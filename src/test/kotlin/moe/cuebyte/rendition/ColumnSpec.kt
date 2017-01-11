@@ -7,6 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 object IncompleteColumnSpec : Spek({
@@ -57,6 +58,45 @@ object IncompleteColumnSpec : Spek({
 
 object ColumnSpec : Spek({
   describe("columns") {
+    on("type info") {
+      fun info(x: IncompleteColumn) = x.complete("").info
+
+      it("'s normal column should be correct") {
+        assertEquals(info(int()), Column.Info.NONE)
+        assertEquals(info(long()), Column.Info.NONE)
+        assertEquals(info(float()), Column.Info.NONE)
+        assertEquals(info(double()), Column.Info.NONE)
+        assertEquals(info(string()), Column.Info.NONE)
+      }
+      it("'s primary key should be correct") {
+        assertEquals(info(int().primaryKey()), Column.Info.NUMBER_PK)
+        assertEquals(info(long().primaryKey()), Column.Info.NUMBER_PK)
+        assertEquals(info(float().primaryKey()), Column.Info.NUMBER_PK)
+        assertEquals(info(double().primaryKey()), Column.Info.NUMBER_PK)
+        assertEquals(info(string().primaryKey()), Column.Info.STRING_PK)
+      }
+      it("'s index should be correct") {
+        assertEquals(info(int().index()), Column.Info.NUMBER_INDEX)
+        assertEquals(info(long().index()), Column.Info.NUMBER_INDEX)
+        assertEquals(info(float().index()), Column.Info.NUMBER_INDEX)
+        assertEquals(info(double().index()), Column.Info.NUMBER_INDEX)
+        assertEquals(info(string().index()), Column.Info.STRING_INDEX)
+      }
+
+      it("should be ok with auto") {
+        assertTrue { string().primaryKey().auto().complete("").automated }
+
+        assertFails { int().primaryKey().auto().complete("").automated }
+
+        assertFalse { string().primaryKey().complete("").automated }
+        assertFalse { string().index().complete("").automated }
+        assertFalse { string().complete("").automated }
+
+        assertFalse { int().primaryKey().complete("").automated }
+        assertFalse { int().index().complete("").automated }
+        assertFalse { int().complete("").automated }
+      }
+    }
     on("methods") {
       it("should be ok with checkType") {
         assertTrue(int().complete("").checkType(0))

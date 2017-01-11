@@ -47,11 +47,11 @@ abstract class Model {
         Column.Info.STRING_PK -> {
           tPk = col;
         }
-        Column.Info.DOUBLE_PK -> {
+        Column.Info.NUMBER_PK -> {
           tPk = col; tDoubleIndices.add(col)
         }
         Column.Info.STRING_INDEX -> tStringIndices.add(col)
-        Column.Info.DOUBLE_INDEX -> tDoubleIndices.add(col)
+        Column.Info.NUMBER_INDEX -> tDoubleIndices.add(col)
       }
     }
     tPk ?: throw Exception("No primary key in schema.")

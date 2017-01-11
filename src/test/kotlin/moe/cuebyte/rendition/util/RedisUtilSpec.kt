@@ -1,12 +1,23 @@
 package moe.cuebyte.rendition.util
 
-import moe.cuebyte.rendition.mock.Book
+import moe.cuebyte.rendition.Model
+import moe.cuebyte.rendition.type.int
+import moe.cuebyte.rendition.type.long
+import moe.cuebyte.rendition.type.string
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
-
+object Book : Model("book", {
+  it["id"] = int().primaryKey().auto()
+  it["author"] = string().index()
+  it["publish"] = string().index()
+  it["words"] = long().index()
+  it["sales"] = long().index()
+  it["introduce"] = string()
+  it["date"] = string()
+})
 object RedisUtilSpec : Spek({
   describe("RedisUtilSpec") {
     on("gen key or id") {
