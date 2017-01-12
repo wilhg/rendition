@@ -8,7 +8,6 @@ import java.util.*
  * The batch input body have to include Id
  */
 internal class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
-  internal val pks: List<String>
   internal val batchBody: List<Map<String, String>>
   internal val batchStrIndices: Map<Column, Map<String, List<String>>>
   internal val batchNumIndices: Map<Column, Map<Double, List<String>>>
@@ -49,26 +48,17 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
       }
     }
 
-    pks = tPks; batchBody = tbBody; batchStrIndices = tbStrIndices; batchNumIndices = tbNumIndices
+    batchBody = tbBody; batchStrIndices = tbStrIndices; batchNumIndices = tbNumIndices
   }
 
   private fun checkInput(input: Map<String, Any>) {
     if (model.columns.map { it.name }.toSet() != input.keys.toSet()) {
       throw Exception("Data do not match the schema.")
     }
-    if (input[model.pk.name] == null) {
-      throw Exception("In batchInsert(), Id must be set. No matter weather the automated was true")
-    }
     if (!model.columns.all {
       input[it.name] == null || it.checkType(input[it.name]!!)
     }) {
       throw Exception("Data do not match the schema.")
     }
-  }
-
-  private fun checkColsName(input: Map<String, Any>): Boolean {
-    val inputKeys = input.keys.toHashSet()
-    inputKeys.removeAll(model.columns.map { it.name })
-    return inputKeys.isEmpty()
   }
 }

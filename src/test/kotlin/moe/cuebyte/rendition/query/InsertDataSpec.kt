@@ -20,6 +20,8 @@ object InsertDataSpec : Spek({
       it("should fails with unmatched schema") {
         assertFails { InsertData(PostAuto, mapOf("name" to "A")) }
         assertFails { InsertData(PostAuto, mapOf("amount" to 100)) }
+        assertFails { InsertData(PostAuto, mapOf("name" to 1, "amount" to 100)) }
+        assertFails { InsertData(PostAuto, mapOf("name" to "A", "amount" to "")) }
         assertFails { InsertData(PostAuto, mapOf("name" to "A", "echo" to "喵")) }
         assertFails { InsertData(PostStr, mapOf("name" to "A", "amount" to 100)) }
         assertFails { InsertData(PostStr, mapOf("id" to 0, "name" to "A", "amount" to 100)) }
