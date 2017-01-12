@@ -7,7 +7,7 @@ import java.util.*
 /**
  * The batch input body have to include Id
  */
-class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
+internal class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
   internal val pks: List<String>
   internal val batchBody: List<Map<String, String>>
   internal val batchStrIndices: Map<Column, Map<String, List<String>>>
@@ -21,7 +21,7 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
     val tbStrIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
     val tbNumIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
 
-    checkInput(batchInput[-1])
+    checkInput(batchInput[0])
     model.stringIndices.forEach { tbStrIndices[it] = HashMap() }
     model.numberIndices.forEach { tbNumIndices[it] = HashMap() }
 
@@ -53,11 +53,11 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
   }
 
   private fun checkInput(input: Map<String, Any>) {
-    if (!checkColsName(input)) {
+    if (model.columns.map { it.name }.toSet() != input.keys.toSet()) {
       throw Exception("Data do not match the schema.")
     }
     if (input[model.pk.name] == null) {
-      throw Exception("In batchInsert, Id must be set. No matter weather the automated was true")
+      throw Exception("In batchInsert(), Id must be set. No matter weather the automated was true")
     }
     if (!model.columns.all {
       input[it.name] == null || it.checkType(input[it.name]!!)

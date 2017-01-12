@@ -7,7 +7,8 @@ internal data class FoolFourReturn(
     val pk: Column,
     val strIndex: List<Column>,
     val numIndex: List<Column>,
-    val columns: List<Column>)
+    val columns: List<Column>
+)
 
 abstract class Model {
   val name: String

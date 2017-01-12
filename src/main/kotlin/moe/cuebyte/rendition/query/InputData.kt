@@ -6,12 +6,12 @@ import moe.cuebyte.rendition.util.IdGenerator
 import java.util.HashMap
 
 @Suppress("LeakingThis")
-abstract class InputData(val model: Model, input: Map<String, Any>) {
+internal abstract class InputData(val model: Model, input: Map<String, Any>) {
 
-  internal val id: String
-  internal val body: Map<String, String>
-  internal val strIndices: Map<Column, String>
-  internal val numIndices: Map<Column, Double> // Jedis score is Double
+  val id: String
+  val body: Map<String, String>
+  val strIndices: Map<Column, String>
+  val numIndices: Map<Column, Double> // Jedis score is Double
 
   protected var tId: String = ""
   protected val tBody: MutableMap<String, String> = HashMap()
@@ -39,7 +39,7 @@ abstract class InputData(val model: Model, input: Map<String, Any>) {
   }
 }
 
-class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input) {
+internal class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input) {
 
   override fun idInit(input: Map<String, Any>) {
     val pk = model.pk
@@ -91,7 +91,7 @@ class InsertData(model: Model, input: Map<String, Any>) : InputData(model, input
   }
 }
 
-class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input) {
+internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input) {
 
   override fun idInit(input: Map<String, Any>) {
     val pkValue = input[model.pk.name]

@@ -1,7 +1,7 @@
 package moe.cuebyte.rendition.util
 
-import redis.clients.jedis.*
-
+import redis.clients.jedis.Jedis
+import redis.clients.jedis.JedisPool
 
 object Connection {
 

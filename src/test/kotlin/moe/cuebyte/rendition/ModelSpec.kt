@@ -17,7 +17,7 @@ object ModelSpec : Spek({
     on("construct") {
       it("init with function") { BookStr }
       it("init with map") { BookInt }
-      it("init with map") { assertFails { BookNone } }
+      it("init with fail") { assertFails { BookNone } }
     }
 
     on("properties") {
