@@ -59,29 +59,29 @@ object IncompleteColumnSpec : Spek({
 
 object ColumnSpec : Spek({
   describe("columns") {
-    on("type info") {
-      fun info(x: IncompleteColumn) = x.complete("").info
+    on("type meta") {
+      fun info(x: IncompleteColumn) = x.complete("").meta
 
       it("'s normal column should be correct") {
-        assertEquals(info(int()), Column.Info.NONE)
-        assertEquals(info(long()), Column.Info.NONE)
-        assertEquals(info(float()), Column.Info.NONE)
-        assertEquals(info(double()), Column.Info.NONE)
-        assertEquals(info(string()), Column.Info.NONE)
+        assertEquals(info(int()), Column.Meta.NONE)
+        assertEquals(info(long()), Column.Meta.NONE)
+        assertEquals(info(float()), Column.Meta.NONE)
+        assertEquals(info(double()), Column.Meta.NONE)
+        assertEquals(info(string()), Column.Meta.NONE)
       }
       it("'s primary key should be correct") {
-        assertEquals(info(int().primaryKey()), Column.Info.NUMBER_PK)
-        assertEquals(info(long().primaryKey()), Column.Info.NUMBER_PK)
-        assertEquals(info(float().primaryKey()), Column.Info.NUMBER_PK)
-        assertEquals(info(double().primaryKey()), Column.Info.NUMBER_PK)
-        assertEquals(info(string().primaryKey()), Column.Info.STRING_PK)
+        assertEquals(info(int().primaryKey()), Column.Meta.NUMBER_PK)
+        assertEquals(info(long().primaryKey()), Column.Meta.NUMBER_PK)
+        assertEquals(info(float().primaryKey()), Column.Meta.NUMBER_PK)
+        assertEquals(info(double().primaryKey()), Column.Meta.NUMBER_PK)
+        assertEquals(info(string().primaryKey()), Column.Meta.STRING_PK)
       }
       it("'s index should be correct") {
-        assertEquals(info(int().index()), Column.Info.NUMBER_INDEX)
-        assertEquals(info(long().index()), Column.Info.NUMBER_INDEX)
-        assertEquals(info(float().index()), Column.Info.NUMBER_INDEX)
-        assertEquals(info(double().index()), Column.Info.NUMBER_INDEX)
-        assertEquals(info(string().index()), Column.Info.STRING_INDEX)
+        assertEquals(info(int().index()), Column.Meta.NUMBER_INDEX)
+        assertEquals(info(long().index()), Column.Meta.NUMBER_INDEX)
+        assertEquals(info(float().index()), Column.Meta.NUMBER_INDEX)
+        assertEquals(info(double().index()), Column.Meta.NUMBER_INDEX)
+        assertEquals(info(string().index()), Column.Meta.STRING_INDEX)
       }
 
       it("should be ok with auto") {

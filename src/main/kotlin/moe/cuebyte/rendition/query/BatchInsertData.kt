@@ -23,7 +23,7 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
     checkInput(batchInput[-1])
     model.stringIndices.forEach { tbStrIndices[it] = HashMap() }
-    model.doubleIndices.forEach { tbNumIndices[it] = HashMap() }
+    model.numberIndices.forEach { tbNumIndices[it] = HashMap() }
 
     for (input in batchInput) {
       val okInput: Map<String, String> = model.columns
@@ -35,12 +35,16 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
 
       for ((col, idxMap) in tbStrIndices) {
         val idxValue = okInput[col.name]!!
-        if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
+        if (idxMap[idxValue] == null) {
+          idxMap[idxValue] = LinkedList()
+        }
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
       for ((col, idxMap) in tbNumIndices) {
         val idxValue = okInput[col.name]!!.toDouble()
-        if (idxMap[idxValue] == null) idxMap[idxValue] = LinkedList()
+        if (idxMap[idxValue] == null) {
+          idxMap[idxValue] = LinkedList()
+        }
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
     }
@@ -49,7 +53,9 @@ class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
   }
 
   private fun checkInput(input: Map<String, Any>) {
-    if (!checkColsName(input)) throw Exception("Data do not match the schema.")
+    if (!checkColsName(input)) {
+      throw Exception("Data do not match the schema.")
+    }
     if (input[model.pk.name] == null) {
       throw Exception("In batchInsert, Id must be set. No matter weather the automated was true")
     }

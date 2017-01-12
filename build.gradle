@@ -13,15 +13,12 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'kotlin'
 
 junitPlatform {
     filters {
-        engines {
-            include 'spek'
-        }
+        engines { include 'spek' }
     }
 }
 

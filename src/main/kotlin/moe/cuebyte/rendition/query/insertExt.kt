@@ -36,6 +36,10 @@ private fun <T : Model> T.commonInsert(data: InsertData): String? {
   for ((col, value) in data.numIndices) {
     t.zadd(genKey(this, col), value, id)
   }
-  return if (t.exec().isEmpty()) null else id
+  return if (t.exec().isEmpty()) {
+    null
+  } else {
+    id
+  }
   // --- END Transaction ---
 }

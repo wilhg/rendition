@@ -5,21 +5,21 @@ import java.util.HashMap
 
 internal data class FoolFourReturn(
     val pk: Column,
-    val sIndex: List<Column>,
-    val dIndex: List<Column>,
+    val strIndex: List<Column>,
+    val numIndex: List<Column>,
     val columns: List<Column>)
 
 abstract class Model {
   val name: String
   val pk: Column
   val stringIndices: List<Column>
-  val doubleIndices: List<Column>
+  val numberIndices: List<Column>
   val columns: List<Column>
 
   constructor(name: String, schema: Map<String, IncompleteColumn>) {
     this.name = name
     val (a, b, c, d) = initIndex(schema)
-    pk = a; stringIndices = b; doubleIndices = c; columns = d
+    pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
   constructor(name: String, body: (MutableMap<String, IncompleteColumn>)->Unit) {
@@ -27,7 +27,7 @@ abstract class Model {
     val schema: MutableMap<String, IncompleteColumn> = HashMap()
     body(schema)
     val (a, b, c, d) = initIndex(schema)
-    pk = a; stringIndices = b; doubleIndices = c; columns = d
+    pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
 
@@ -40,20 +40,19 @@ abstract class Model {
     for ((name, _col) in schema) {
       val col: Column = _col.complete(name)
       tColumns.add(col)
-      when (col.info) {
-        Column.Info.NONE -> {
-        }
-        Column.Info.STRING_PK -> {
-          tPk = col;
-        }
-        Column.Info.NUMBER_PK -> {
+      when (col.meta) {
+        Column.Meta.NONE -> {}
+        Column.Meta.STRING_PK -> tPk = col;
+        Column.Meta.NUMBER_PK -> {
           tPk = col; tDoubleIndices.add(col)
         }
-        Column.Info.STRING_INDEX -> tStringIndices.add(col)
-        Column.Info.NUMBER_INDEX -> tDoubleIndices.add(col)
+        Column.Meta.STRING_INDEX -> tStringIndices.add(col)
+        Column.Meta.NUMBER_INDEX -> tDoubleIndices.add(col)
       }
     }
-    tPk ?: throw Exception("No primary key in schema.")
+    if (tPk == null) {
+      throw Exception("No primary key in schema.")
+    }
     return FoolFourReturn(tPk, tStringIndices, tDoubleIndices, tColumns)
   }
 }

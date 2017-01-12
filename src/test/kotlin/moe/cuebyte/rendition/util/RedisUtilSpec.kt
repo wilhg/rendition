@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition.util
 
 import moe.cuebyte.rendition.Model
+import moe.cuebyte.rendition.mock.BookStr
 import moe.cuebyte.rendition.type.int
 import moe.cuebyte.rendition.type.long
 import moe.cuebyte.rendition.type.string
@@ -10,27 +11,19 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 
-object Book : Model("book", {
-  it["id"] = string().primaryKey().auto()
-  it["author"] = string().index()
-  it["publish"] = string().index()
-  it["words"] = long().index()
-  it["sales"] = long().index()
-  it["introduce"] = string()
-  it["date"] = string()
-})
-
 object RedisUtilSpec : Spek({
   describe("RedisUtilSpec") {
     on("gen key or id") {
       it("gen id") {
-        assertEquals(genId(Book, "abc"), "${Book.name}:abc")
+        assertEquals(genId(BookStr, "abc"), "${BookStr.name}:abc")
       }
       it("gen hash key") {
-        assertEquals(genKey(Book, Book.stringIndices[0], "Shakes"), "book:author:Shakes")
+        assertEquals(genKey(BookStr, BookStr.stringIndices[0], "Shakes"),
+            "${BookStr.name}:${BookStr.stringIndices[0].name}:Shakes")
       }
       it("gen sorted set key") {
-        assertEquals(genKey(Book, Book.doubleIndices[0]), "book:words")
+        assertEquals(genKey(BookStr, BookStr.numberIndices[0]),
+            "${BookStr.name}:${BookStr.numberIndices[0].name}")
       }
     }
   }
