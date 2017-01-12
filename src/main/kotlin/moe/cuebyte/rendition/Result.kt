@@ -2,7 +2,8 @@ package moe.cuebyte.rendition
 
 import redis.clients.jedis.Response
 
-class Result(private val model: Model, private val resp: Response<Map<String, String>>) : Map<String, Any?> {
+class Result(private val model: Model, private val resp: Response<Map<String, String>>)
+  : Map<String, Any?> {
 
   override val entries: Set<Map.Entry<String, Any?>>
     get() = lazyValue.entries
@@ -18,22 +19,20 @@ class Result(private val model: Model, private val resp: Response<Map<String, St
   override fun get(key: String) = lazyValue[key]
   override fun isEmpty() = lazyValue.isEmpty()
 
-  private val lazyValue by lazy { initValue() }
+  private val lazyValue by lazy { init() }
 
-  private fun initValue(): Map<String, Any?> {
+  private fun init(): Map<String, Any?> {
     val data = resp.get()
     return model.columns.map { col ->
-      val (name, datum) = Pair(col.name, data[col.name])
-      if (datum == null) {
-        name to null
-      } else when (col.type) {
-        String::class.java  -> name to datum
-        Int::class.java     -> name to datum.toInt()
-        Double::class.java  -> name to datum.toDouble()
-        Boolean::class.java -> name to datum.toBoolean()
-        Float::class.java   -> name to datum.toFloat()
-        Long::class.java    -> name to datum.toLong()
-        else                -> name to null
+      val datum = data[col.name]
+      when (col.type) {
+        String::class.java  -> col.name to datum
+        Int::class.java     -> col.name to datum?.toInt()
+        Double::class.java  -> col.name to datum?.toDouble()
+        Boolean::class.java -> col.name to datum?.toBoolean()
+        Float::class.java   -> col.name to datum?.toFloat()
+        Long::class.java    -> col.name to datum?.toLong()
+        else                -> col.name to null
       }
     }.toMap()
   }

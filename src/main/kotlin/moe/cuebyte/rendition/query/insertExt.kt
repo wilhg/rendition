@@ -39,7 +39,7 @@ private fun <T : Model> T.commonInsert(data: InsertData): String? {
   return if (t.exec().isEmpty()) {
     null
   } else {
-    id
+    genId(this,id)
   }
   // --- END Transaction ---
 }

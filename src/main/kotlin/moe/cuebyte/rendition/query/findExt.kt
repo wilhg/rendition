@@ -13,12 +13,12 @@ fun Model.find(id: String): Result {
   return Result(this, resp)
 }
 
-fun Model.findBy(index: String): List<Result> {
-  val p = Connection.get().pipelined()
-  p.sync()
-}
-
-fun Model.findBy(index: Number): List<Result> {
-  val p = Connection.get().pipelined()
-  p.sync()
-}
+//fun Model.findBy(index: String): List<Result> {
+//  val p = Connection.get().pipelined()
+//  p.sync()
+//}
+//
+//fun Model.findBy(index: Number): List<Result> {
+//  val p = Connection.get().pipelined()
+//  p.sync()
+//}
