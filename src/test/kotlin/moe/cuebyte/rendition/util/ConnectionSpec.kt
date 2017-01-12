@@ -15,7 +15,6 @@ object ConnectionSpec : Spek({
       val jedis = Jedis("localhost")
       val pool = JedisPool(JedisPoolConfig(), "localhost")
       it("should be useful") {
-        assertFails { Connection.get() }
         Connection.set(pool)
         assert(Connection.get().ping() == "PONG")
       }

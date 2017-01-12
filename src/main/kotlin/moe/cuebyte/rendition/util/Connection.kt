@@ -9,15 +9,15 @@ object Connection {
   private var pool: JedisPool? = null
 
   fun set(jedis: Jedis) {
-    if (conn != null || this.pool != null) {
-      throw Exception("Connection has been set.")
+    if (conn != null) {
+      return
     }
     conn = jedis
   }
 
   fun set(pool: JedisPool) {
-    if (conn != null || this.pool != null) {
-      throw Exception("Connection has been set.")
+    if (this.pool != null) {
+      return
     }
     this.pool = pool
   }
