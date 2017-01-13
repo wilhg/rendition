@@ -5,14 +5,10 @@ import redis.clients.jedis.Response
 class Result(private val model: Model, private val resp: Response<Map<String, String>>)
   : Map<String, Any?> {
 
-  override val entries: Set<Map.Entry<String, Any?>>
-    get() = lazyValue.entries
-  override val keys: Set<String>
-    get() = lazyValue.keys
-  override val size: Int
-    get() = lazyValue.size
-  override val values: Collection<Any?>
-    get() = lazyValue.values
+  override val entries get() = lazyValue.entries
+  override val values get() = lazyValue.values
+  override val keys get() = lazyValue.keys
+  override val size get() = lazyValue.size
 
   override fun containsValue(value: Any?) = lazyValue.containsValue(value)
   override fun containsKey(key: String) = lazyValue.containsKey(key)

@@ -4,25 +4,28 @@ import moe.cuebyte.rendition.Column
 import moe.cuebyte.rendition.Model
 import java.util.*
 
+internal typealias MutableMultiIndex<T> = MutableMap<Column, MutableMap<T, MutableList<String>>>
+internal typealias MultiIndex<T> = Map<Column, Map<T, List<String>>>
+
 /**
  * The batch input body have to include Id
  */
 internal class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
-  internal val batchBody: List<Map<String, String>>
-  internal val batchStrIndices: Map<Column, Map<String, List<String>>>
-  internal val batchNumIndices: Map<Column, Map<Double, List<String>>>
+  internal val bodies: List<Map<String, String>>
+  internal val strMultiIndex: MultiIndex<String>
+  internal val numMultiIndex: MultiIndex<Double>
 
   init {
     // `t` = template
-    // `b` = batch
+    // `m` = multi
     val tPks: MutableList<String> = LinkedList()
-    val tbBody: MutableList<Map<String, String>> = LinkedList()
-    val tbStrIndices: MutableMap<Column, MutableMap<String, MutableList<String>>> = HashMap()
-    val tbNumIndices: MutableMap<Column, MutableMap<Double, MutableList<String>>> = HashMap()
+    val tBodies: MutableList<Map<String, String>> = LinkedList()
+    val tmStrMultiIndex: MutableMultiIndex<String> = HashMap()
+    val tmNumMultiIndex: MutableMultiIndex<Double> = HashMap()
 
     checkInput(batchInput[0])
-    model.stringIndices.forEach { tbStrIndices[it] = HashMap() }
-    model.numberIndices.forEach { tbNumIndices[it] = HashMap() }
+    model.stringIndices.forEach { tmStrMultiIndex[it] = HashMap() }
+    model.numberIndices.forEach { tmNumMultiIndex[it] = HashMap() }
 
     for (input in batchInput) {
       val okInput: Map<String, String> = model.columns
@@ -30,16 +33,16 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
           .toMap()
 
       tPks.add(okInput[model.pk.name]!!.toString())
-      tbBody.add(okInput)
+      tBodies.add(okInput)
 
-      for ((col, idxMap) in tbStrIndices) {
+      for ((col, idxMap) in tmStrMultiIndex) {
         val idxValue = okInput[col.name]!!
         if (idxMap[idxValue] == null) {
           idxMap[idxValue] = LinkedList()
         }
         idxMap[idxValue]!!.add(okInput[model.pk.name]!!)
       }
-      for ((col, idxMap) in tbNumIndices) {
+      for ((col, idxMap) in tmNumMultiIndex) {
         val idxValue = okInput[col.name]!!.toDouble()
         if (idxMap[idxValue] == null) {
           idxMap[idxValue] = LinkedList()
@@ -48,7 +51,7 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
       }
     }
 
-    batchBody = tbBody; batchStrIndices = tbStrIndices; batchNumIndices = tbNumIndices
+    bodies = tBodies; strMultiIndex = tmStrMultiIndex; numMultiIndex = tmNumMultiIndex
   }
 
   private fun checkInput(input: Map<String, Any>) {
