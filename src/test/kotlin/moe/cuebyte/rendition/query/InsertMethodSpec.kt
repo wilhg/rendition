@@ -2,6 +2,7 @@ package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.mock.PostStr
 import moe.cuebyte.rendition.util.Connection
+import moe.cuebyte.rendition.util.genId
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -9,7 +10,7 @@ import redis.clients.jedis.Jedis
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-object InsertMethodSpec :Spek({
+object InsertMethodSpec : Spek({
   describe("insert method") {
     beforeGroup {
       Connection.set(Jedis("localhost"))
@@ -19,7 +20,7 @@ object InsertMethodSpec :Spek({
         it["id"] = "a"
         it["name"] = "A"
         it["amount"] = 100
-      }, "a")
+      }, genId(PostStr, "a"))
     }
   }
 

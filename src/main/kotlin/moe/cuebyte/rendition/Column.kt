@@ -1,7 +1,7 @@
 package moe.cuebyte.rendition
 
 class Column
-internal constructor(val name: String, type: Class<*>, default: Any, val meta: Meta, val automated: Boolean)
+internal constructor(val name: String,val meta: Meta, val automated: Boolean, type: Class<*>, default: Any)
   : IncompleteColumn(type, default) {
   enum class Meta {
     NONE,
@@ -64,5 +64,5 @@ open class IncompleteColumn(val type: Class<*>, val default: Any) {
     return this
   }
 
-  fun complete(name: String): Column = Column(name, this.type, this.default, meta, automated)
+  fun complete(name: String): Column = Column(name, meta, automated, this.type, this.default)
 }
