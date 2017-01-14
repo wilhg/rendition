@@ -14,6 +14,10 @@ object InsertMethodSpec : Spek({
   describe("insert method") {
     beforeGroup {
       Connection.set(Jedis("localhost"))
+      Connection.get().select(4)
+    }
+    afterGroup {
+      Connection.get().flushDB()
     }
     it("should return id") {
       assertEquals(PostStr.insert {

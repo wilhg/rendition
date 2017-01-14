@@ -13,7 +13,13 @@ import kotlin.test.assertTrue
 
 object FindMethodSpec : Spek({
   describe("findMethodExt") {
-    beforeGroup { Connection.set(Jedis("localhost")) }
+    beforeGroup {
+      Connection.set(Jedis("localhost"))
+      Connection.get().select(4)
+    }
+    afterGroup {
+      Connection.get().flushDB()
+    }
 
     on("find") {
       val id = PostAuto.insert(mapOf("name" to "a", "amount" to 1))
@@ -33,9 +39,14 @@ object FindMethodSpec : Spek({
           mapOf("id" to "3", "name" to "a", "amount" to 1)
       ))
 
-      it("should ok") {
+      it("should ok with str index") {
         PostStr.findBy("name", "a")
+            .forEach { assertEquals(it["name"], "a") }
+      }
+
+      it("should ok with num index") {
         PostStr.findBy("amount", 1)
+            .forEach { assertEquals(it["amount"], 1) }
       }
     }
   }
