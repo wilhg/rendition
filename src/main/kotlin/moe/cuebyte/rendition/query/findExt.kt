@@ -2,6 +2,7 @@ package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.Model
 import moe.cuebyte.rendition.Result
+import moe.cuebyte.rendition.ResultSet
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
@@ -16,23 +17,30 @@ fun Model.find(id: String): Result {
   return Result(this, resp)
 }
 
-fun Model.findBy(name: String, value: String): List<Result> {
+fun Model.findBy(name: String, value: String): ResultSet {
   val col = this.stringIndices[name] ?:
       throw Exception("Index doesn't exist")
   val ids = Connection.get().smembers(genKey(this, col, value))
   return getResults(ids)
 }
 
-fun Model.findBy(name: String, value: Number): List<Result> {
+fun Model.findBy(name: String, value: Number): ResultSet {
   val col = this.numberIndices[name] ?:
       throw Exception("Index doesn't exist")
   val ids = Connection.get().zrangeByScore(genKey(this, col), value.toDouble(), value.toDouble())
   return getResults(ids)
 }
 
-private fun Model.getResults(ids: Set<String>): List<Result> {
+fun <T : Number> Model.range(name: String, start: T, stop: T): ResultSet {
+  val col = this.numberIndices[name] ?:
+      throw Exception("Index doesn't exist")
+  val ids = Connection.get().zrangeByScore(genKey(this, col), start.toDouble(), stop.toDouble())
+  return getResults(ids)
+}
+
+private fun Model.getResults(ids: Set<String>): ResultSet {
   val p = Connection.get().pipelined()
-  val results = ids.mapTo(LinkedList()) { Result(this, p.hgetAll(genId(this, it))) }
+  val resultSet = ids.mapTo(ResultSet(this)) { Result(this, p.hgetAll(genId(this, it))) }
   p.sync()
-  return results
+  return resultSet
 }

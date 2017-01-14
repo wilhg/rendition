@@ -9,6 +9,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import redis.clients.jedis.Jedis
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 object FindMethodSpec : Spek({
@@ -43,10 +44,23 @@ object FindMethodSpec : Spek({
         PostStr.findBy("name", "a")
             .forEach { assertEquals(it["name"], "a") }
       }
-
       it("should ok with num index") {
         PostStr.findBy("amount", 1)
             .forEach { assertEquals(it["amount"], 1) }
+      }
+    }
+
+    on("range") {
+      PostStr.batchInsert(listOf(
+          mapOf("id" to "1", "name" to "a", "amount" to 1),
+          mapOf("id" to "2", "name" to "a", "amount" to 2),
+          mapOf("id" to "3", "name" to "a", "amount" to 3)
+      ))
+      it("should ok") {
+        val x = PostStr.range("amount", 1, 2)
+        assertTrue { "1" in x.map { it["id"] } }
+        assertTrue { "2" in x.map { it["id"] } }
+        assertFalse { "3" in x.map { it["id"] } }
       }
     }
   }

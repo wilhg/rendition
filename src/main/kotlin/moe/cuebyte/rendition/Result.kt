@@ -33,3 +33,8 @@ class Result(private val model: Model, private val resp: Response<Map<String, St
     }.toMap()
   }
 }
+
+class ResultSet(private val model: Model) : HashSet<Result>() {
+  val and get() = model
+  val or get() = model
+}
