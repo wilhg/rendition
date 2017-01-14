@@ -2,15 +2,17 @@ package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.Column
 import moe.cuebyte.rendition.Model
-import java.util.*
+import java.util.HashMap
+import java.util.LinkedList
 
-internal typealias MutableMultiIndex<T> = MutableMap<Column, MutableMap<T, MutableList<String>>>
-internal typealias MultiIndex<T> = Map<Column, Map<T, List<String>>>
+private typealias MutableMultiIndex<T> = MutableMap<Column, MutableMap<T, MutableList<String>>>
+private typealias MultiIndex<T> = Map<Column, Map<T, List<String>>>
 
 /**
  * The batch input body have to include Id
  */
 internal class BatchInsertData(val model: Model, batchInput: List<Map<String, Any>>) {
+
   internal val bodies: List<Map<String, String>>
   internal val strMultiIndex: MultiIndex<String>
   internal val numMultiIndex: MultiIndex<Double>
@@ -31,7 +33,6 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
       val okInput: Map<String, String> = model.columns
           .map { it.name to (input[it.name] ?: it.default).toString() }
           .toMap()
-
       tPks.add(okInput[model.pk.name]!!.toString())
       tBodies.add(okInput)
 
