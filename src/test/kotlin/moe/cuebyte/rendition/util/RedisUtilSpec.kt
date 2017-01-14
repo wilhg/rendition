@@ -18,12 +18,12 @@ object RedisUtilSpec : Spek({
         assertEquals(genId(BookStr, "abc"), "${BookStr.name}:abc")
       }
       it("gen hash key") {
-        assertEquals(genKey(BookStr, BookStr.stringIndices[0], "Shakes"),
-            "${BookStr.name}:${BookStr.stringIndices[0].name}:Shakes")
+        assertEquals(genKey(BookStr, BookStr.stringIndices.values.first(), "Shakes"),
+            "${BookStr.name}:${BookStr.stringIndices.keys.first()}:Shakes")
       }
       it("gen sorted set key") {
-        assertEquals(genKey(BookStr, BookStr.numberIndices[0]),
-            "${BookStr.name}:${BookStr.numberIndices[0].name}")
+        assertEquals(genKey(BookStr, BookStr.numberIndices.values.first()),
+            "${BookStr.name}:${BookStr.numberIndices.keys.first()}")
       }
     }
   }

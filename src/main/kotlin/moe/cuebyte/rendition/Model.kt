@@ -1,20 +1,19 @@
 package moe.cuebyte.rendition
 
-import java.util.ArrayList
 import java.util.HashMap
 
 internal data class FoolFourReturn(
     val pk: Column,
-    val strIndex: List<Column>,
-    val numIndex: List<Column>,
+    val strIndex: Map<String, Column>,
+    val numIndex: Map<String, Column>,
     val columns: List<Column>
 )
 
 abstract class Model {
   val name: String
   val pk: Column
-  val stringIndices: List<Column>
-  val numberIndices: List<Column>
+  val stringIndices: Map<String, Column>
+  val numberIndices: Map<String, Column>
   val columns: List<Column>
 
   constructor(name: String, schema: Map<String, IncompleteColumn>) {
@@ -34,8 +33,8 @@ abstract class Model {
 
   private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
     var tPk: Column? = null
-    val tStringIndices: MutableList<Column> = ArrayList()
-    val tDoubleIndices: MutableList<Column> = ArrayList()
+    val tStringIndices: MutableMap<String, Column> = HashMap()
+    val tDoubleIndices: MutableMap<String, Column> = HashMap()
     val tColumns: MutableList<Column> = ArrayList()
 
     for ((name, _col) in schema) {
@@ -45,10 +44,10 @@ abstract class Model {
         Column.Meta.NONE -> {}
         Column.Meta.STRING_PK -> tPk = col;
         Column.Meta.NUMBER_PK -> {
-          tPk = col; tDoubleIndices.add(col)
+          tPk = col; tDoubleIndices.put(col.name, col)
         }
-        Column.Meta.STRING_INDEX -> tStringIndices.add(col)
-        Column.Meta.NUMBER_INDEX -> tDoubleIndices.add(col)
+        Column.Meta.STRING_INDEX -> tStringIndices.put(col.name, col)
+        Column.Meta.NUMBER_INDEX -> tDoubleIndices.put(col.name, col)
       }
     }
     if (tPk == null) {

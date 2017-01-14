@@ -58,7 +58,7 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun indicesInit(input: Map<String, Any>) {
-    model.stringIndices.forEach { idx ->
+    model.stringIndices.values.forEach { idx ->
       if (input[idx.name] == null) {
         throw Exception("Index-${idx.name} shall be defined.")
       }
@@ -67,7 +67,7 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
       }
       tStrIndices.put(idx, input[idx.name] as String)
     }
-    model.numberIndices.forEach { idx ->
+    model.numberIndices.values.forEach { idx ->
       if (input[idx.name] == null) {
         throw Exception("Index-${idx.name} shall be defined.")
       }
@@ -102,7 +102,7 @@ internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun indicesInit(input: Map<String, Any>) {
-    model.stringIndices.forEach { idx ->
+    model.stringIndices.values.forEach { idx ->
       if (input[idx.name] == null) {
         return
       }
@@ -111,7 +111,7 @@ internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(mod
       }
       tStrIndices.put(idx, input[idx.name] as String)
     }
-    model.numberIndices.forEach { idx ->
+    model.numberIndices.values.forEach { idx ->
       if (input[idx.name] == null) {
         return
       }

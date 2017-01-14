@@ -25,15 +25,15 @@ object ModelSpec : Spek({
         assertEquals(BookStr.pk.name, "id")
       }
       it("is string indices") {
-        assertTrue { "author" in BookStr.stringIndices.map { it.name } }
-        assertFalse { "words" in BookStr.stringIndices.map { it.name } }
+        assertTrue { "author" in BookStr.stringIndices.keys }
+        assertFalse { "words" in BookStr.stringIndices.keys }
       }
       it("is number indices") {
-        assertTrue { "id" in BookInt.numberIndices.map { it.name } }
-        assertFalse { "id" in BookStr.numberIndices.map { it.name } }
+        assertTrue { "id" in BookInt.numberIndices.keys }
+        assertFalse { "id" in BookStr.numberIndices.keys }
 
-        assertTrue { "words" in BookStr.numberIndices.map { it.name } }
-        assertFalse { "author" in BookStr.numberIndices.map { it.name } }
+        assertTrue { "words" in BookStr.numberIndices.keys }
+        assertFalse { "author" in BookStr.numberIndices.keys }
       }
       it("is columns") {
         assertTrue { "id" in BookStr.columns.map { it.name } }
