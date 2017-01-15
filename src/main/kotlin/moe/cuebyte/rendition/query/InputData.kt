@@ -102,24 +102,13 @@ internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun indicesInit(input: Map<String, Any>) {
-    model.stringIndices.values.forEach { idx ->
-      if (input[idx.name] == null) {
-        return
-      }
-      if (input[idx.name] !is String) {
-        throw Exception("${idx.name} should be String.")
-      }
-      tStrIndices.put(idx, input[idx.name] as String)
-    }
-    model.numberIndices.values.forEach { idx ->
-      if (input[idx.name] == null) {
-        return
-      }
-      if (!idx.checkType(input[idx.name]!!)) {
-        throw Exception("${idx.name} type error.")
-      }
-      tNumIndices.put(idx, (input[idx.name] as Number).toDouble())
-    }
+    model.stringIndices.values
+        .filter { input[it.name] != null }
+        .forEach { tStrIndices.put(it, input[it.name] as String) }
+
+    model.numberIndices.values
+        .filter { input[it.name] != null }
+        .forEach { tNumIndices.put(it, (input[it.name] as Number).toDouble()) }
   }
 
   override fun dataInit(input: Map<String, Any>) {
