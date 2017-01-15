@@ -34,7 +34,7 @@ internal abstract class InputData(val model: Model, input: Map<String, Any>) {
 
   private fun checkColsName(input: Map<String, Any>): Boolean {
     val tmpSet = input.keys.toHashSet()
-    tmpSet.removeAll(model.columns.map { it.name })
+    tmpSet.removeAll(model.columns.keys)
     return tmpSet.isEmpty()
   }
 }
@@ -59,18 +59,18 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
 
   override fun indicesInit(input: Map<String, Any>) {
     model.stringIndices.values.forEach { idx ->
-      if (input[idx.name] == null) {
+      input[idx.name] ?:
         throw Exception("Index-${idx.name} shall be defined.")
-      }
+
       if (input[idx.name]!! !is String) {
         throw Exception("${idx.name} should be String.")
       }
       tStrIndices.put(idx, input[idx.name] as String)
     }
     model.numberIndices.values.forEach { idx ->
-      if (input[idx.name] == null) {
+      input[idx.name] ?:
         throw Exception("Index-${idx.name} shall be defined.")
-      }
+
       if (!idx.checkType(input[idx.name]!!)) {
         throw Exception("${idx.name} type error.")
       }
@@ -79,13 +79,13 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun dataInit(input: Map<String, Any>) {
-    model.columns.forEach { col ->
-      if (col.name !in input.keys) {
-        tBody.put(col.name, col.default.toString())
-      } else if (!col.checkType(input[col.name]!!)) {
-        throw Exception("${col.name} type error.")
+    for ((name, col) in model.columns) {
+      if (name !in input.keys) {
+        tBody.put(name, col.default.toString())
+      } else if (!col.checkType(input[name]!!)) {
+        throw Exception("$name type error.")
       } else {
-        tBody.put(col.name, input[col.name].toString())
+        tBody.put(name, input[name].toString())
       }
     }
   }
@@ -123,11 +123,11 @@ internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun dataInit(input: Map<String, Any>) {
-    model.columns.forEach { col ->
-      if (!col.checkType(input[col.name]!!)) {
-        throw Exception("${col.name} type error.")
+    for ((name, col) in model.columns) {
+      if (!col.checkType(input[name]!!)) {
+        throw Exception("$name type error.")
       }
-      tBody.put(col.name, input[col.name].toString())
+      tBody.put(name, input[name].toString())
     }
   }
 }

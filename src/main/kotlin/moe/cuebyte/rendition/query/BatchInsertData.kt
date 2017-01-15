@@ -31,7 +31,7 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
 
     for (input in batchInput) {
       val okInput: Map<String, String> = model.columns
-          .map { it.name to (input[it.name] ?: it.default).toString() }
+          .map { (name, col) -> name to (input[name] ?: col.default).toString() }
           .toMap()
       tPks.add(okInput[model.pk.name]!!.toString())
       tBodies.add(okInput)
@@ -56,10 +56,10 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
   }
 
   private fun checkInput(input: Map<String, Any>) {
-    if (model.columns.map { it.name }.toSet() != input.keys.toSet()) {
+    if (model.columns.map { it.key }.toSet() != input.keys.toSet()) {
       throw Exception("Data do not match the schema.")
     }
-    if (!model.columns.all {
+    if (!model.columns.values.all {
       input[it.name] == null || it.checkType(input[it.name]!!)
     }) {
       throw Exception("Data do not match the schema.")

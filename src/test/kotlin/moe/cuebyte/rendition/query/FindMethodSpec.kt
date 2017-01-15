@@ -60,7 +60,7 @@ object FindMethodSpec : Spek({
         val x = PostStr.range("amount", 1, 2)
         assertTrue { "1" in x.map { it["id"] } }
         assertTrue { "2" in x.map { it["id"] } }
-        assertFalse { "3" in x.map { it["id"] } }
+        assertTrue { "3" !in x.map { it["id"] } }
       }
     }
   }

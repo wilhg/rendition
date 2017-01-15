@@ -6,7 +6,7 @@ internal data class FoolFourReturn(
     val pk: Column,
     val strIndex: Map<String, Column>,
     val numIndex: Map<String, Column>,
-    val columns: List<Column>
+    val columns: Map<String, Column>
 )
 
 abstract class Model {
@@ -14,7 +14,7 @@ abstract class Model {
   val pk: Column
   val stringIndices: Map<String, Column>
   val numberIndices: Map<String, Column>
-  val columns: List<Column>
+  val columns: Map<String, Column>
 
   constructor(name: String, schema: Map<String, IncompleteColumn>) {
     this.name = name
@@ -35,11 +35,11 @@ abstract class Model {
     var tPk: Column? = null
     val tStringIndices: MutableMap<String, Column> = HashMap()
     val tDoubleIndices: MutableMap<String, Column> = HashMap()
-    val tColumns: MutableList<Column> = ArrayList()
+    val tColumns: MutableMap<String, Column> = HashMap()
 
     for ((name, _col) in schema) {
       val col: Column = _col.complete(name)
-      tColumns.add(col)
+      tColumns.put(col.name, col)
       when (col.meta) {
         Column.Meta.NONE -> {}
         Column.Meta.STRING_PK -> tPk = col;
@@ -50,9 +50,9 @@ abstract class Model {
         Column.Meta.NUMBER_INDEX -> tDoubleIndices.put(col.name, col)
       }
     }
-    if (tPk == null) {
+    tPk ?:
       throw Exception("No primary key in schema.")
-    }
+
     return FoolFourReturn(tPk, tStringIndices, tDoubleIndices, tColumns)
   }
 }

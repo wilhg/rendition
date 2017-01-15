@@ -36,8 +36,8 @@ object ModelSpec : Spek({
         assertFalse { "author" in BookStr.numberIndices.keys }
       }
       it("is columns") {
-        assertTrue { "id" in BookStr.columns.map { it.name } }
-        assertTrue { "date" in BookStr.columns.map { it.name } }
+        assertTrue { "id" in BookStr.columns.keys }
+        assertTrue { "date" in BookStr.columns.keys }
       }
     }
   }
