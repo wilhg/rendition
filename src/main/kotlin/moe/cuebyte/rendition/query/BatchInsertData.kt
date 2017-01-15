@@ -33,7 +33,7 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
       val okInput: Map<String, String> = model.columns
           .map { (name, col) -> name to (input[name] ?: col.default).toString() }
           .toMap()
-      tPks.add(okInput[model.pk.name]!!.toString())
+      tPks.add(okInput[model.pk.name] as String)
       tBodies.add(okInput)
 
       for ((col, idxMap) in tmStrMultiIndex) {

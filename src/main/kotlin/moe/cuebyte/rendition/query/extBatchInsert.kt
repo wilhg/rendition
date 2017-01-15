@@ -5,7 +5,7 @@ import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
 
-fun <T : Model> T.batchInsert(batch: List<Map<String, Any>>): Boolean {
+fun Model.batchInsert(batch: List<Map<String, Any>>): Boolean {
   val bInsert = BatchInsertData(this, batch)
   val t = Connection.get().multi()
   
