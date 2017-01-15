@@ -7,16 +7,11 @@ import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
 
 fun Result.update(data: Map<String, Any>): String? {
-  val tUpdateData = HashMap(this)
-
   val remStrIndex: MutableMap<String, String> = HashMap()
 
-  for ((key, value) in data) {
-    if (model.stringIndices.containsKey(key)) {
-      remStrIndex[key] = this[key] as String
-    }
-    tUpdateData[key] = value
-  }
+  data.keys
+      .filter { model.stringIndices.containsKey(it) }
+      .forEach { remStrIndex[it] = this[it] as String }
 
   val updateData = UpdateData(model, data)
   val id = updateData.id
