@@ -9,20 +9,20 @@ import moe.cuebyte.rendition.util.genKey
 fun Result.update(data: Map<String, Any>): String? {
   val tUpdateData = HashMap(this)
 
-  val updateStrIndex: MutableMap<String, String> = HashMap()
+  val remStrIndex: MutableMap<String, String> = HashMap()
 
   for ((key, value) in data) {
-    tUpdateData[key] = value
     if (model.stringIndices.containsKey(key)) {
-      updateStrIndex[key] = value as String
+      remStrIndex[key] = this[key] as String
     }
+    tUpdateData[key] = value
   }
 
   val updateData = UpdateData(model, data)
   val id = updateData.id
 
   val t = Connection.get().multi()
-  for ((k, v) in updateStrIndex) { // Delete index in set only
+  for ((k, v) in remStrIndex) { // Delete index in set only
     val col = model.stringIndices[k]!!
     t.srem(genKey(model, col, v), id)
   }

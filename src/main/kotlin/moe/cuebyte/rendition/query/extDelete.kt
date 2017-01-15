@@ -7,14 +7,14 @@ import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
 
 fun Result.update(): Boolean {
-  val deleteStrIndex: MutableMap<Column, String> = HashMap()
+  val remStrIndex: MutableMap<Column, String> = HashMap()
   for ((name, col) in model.stringIndices) {
-    deleteStrIndex[col] = this[name] as String
+    remStrIndex[col] = this[name] as String
   }
 
   val id = this[model.pk.name]!! as String
   val t = Connection.get().multi()
-  for ((col, value) in deleteStrIndex) {
+  for ((col, value) in remStrIndex) {
     t.srem(genKey(model, col, value), id)
   }
   for ((name, col) in model.numberIndices) {
