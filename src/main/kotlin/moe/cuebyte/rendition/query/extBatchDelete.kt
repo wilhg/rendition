@@ -13,6 +13,7 @@ fun ResultSet.delete(): Boolean {
 
   val ids = this.map { it[model.pk.name]!! as String }.toTypedArray()
   val t = Connection.get().multi()
+
   for ((name, value) in remStrIndex) {
     t.srem(genKey(model, name, value), *ids)
   }
