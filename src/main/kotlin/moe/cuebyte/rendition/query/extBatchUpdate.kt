@@ -11,7 +11,7 @@ fun ResultSet.update(data: Map<String, Any>): Boolean {
     remStrIndex[name] = this.first()[name] as String
   }
 
-  val ids = this.map { it[model.pk.name]!! as String }.toTypedArray()
+  val ids = this.map { it[model.pk.name] as String }.toTypedArray()
   val updateData = UpdateData(model, data)
   val t = Connection.get().multi()
 
@@ -24,7 +24,7 @@ fun ResultSet.update(data: Map<String, Any>): Boolean {
     t.sadd(genKey(model, col, value), *ids)
   }
   for ((col, value) in updateData.numIndices) {
-    t.zadd(genKey(model, col), ids.map { (it to value) }.toMap())
+    t.zadd(genKey(model, col), ids.map { it to value }.toMap())
   }
 
   return !t.exec().isEmpty()

@@ -11,7 +11,7 @@ fun ResultSet.delete(): Boolean {
     remStrIndex[name] = this.first()[name] as String
   }
 
-  val ids = this.map { it[model.pk.name]!! as String }.toTypedArray()
+  val ids = this.map { it[model.pk.name] as String }.toTypedArray()
   val t = Connection.get().multi()
 
   for ((name, value) in remStrIndex) {

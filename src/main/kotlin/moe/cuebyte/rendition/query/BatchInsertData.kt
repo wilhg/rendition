@@ -56,7 +56,7 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
   }
 
   private fun checkInput(input: Map<String, Any>) {
-    if (model.columns.map { it.key }.toSet() != input.keys.toSet()) {
+    if (model.columns.keys.toSet() != input.keys.toSet()) {
       throw Exception("Data do not match the schema.")
     }
     if (!model.columns.values.all {
