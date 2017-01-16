@@ -19,13 +19,11 @@ fun Result.update(data: Map<String, Any>): String? {
       .filter { model.stringIndices.containsKey(it) }
       .forEach { remStrIndex[it] = this[it] as String }
 
-  val dataWithId = HashMap(data)
-  println(model.pk.name)
-  println(this[model.pk.name])
-  dataWithId.put(model.pk.name, this[model.pk.name])
+//  val dataWithId = HashMap(data)
+//  dataWithId.put(model.pk.name, this[model.pk.name])
 
-  val updateData = UpdateData(model, dataWithId)
-  val id = updateData.id
+  val updateData = UpdateData(model, data)
+  val id = this[model.pk.name] as String
   val t = Connection.get().multi()
 
   for ((k, v) in remStrIndex) {
