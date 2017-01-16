@@ -4,13 +4,7 @@ import moe.cuebyte.rendition.Model
 
 internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(model, input) {
 
-  override fun idInit(input: Map<String, Any>) {
-//    val pkValue = input[model.pk.name]
-//    if (pkValue == null || pkValue == "") {
-//      throw Exception("Id has not defined.")
-//    }
-//    tId = pkValue.toString()
-  }
+  override fun idInit(input: Map<String, Any>) {}
 
   override fun indicesInit(input: Map<String, Any>) {
     model.stringIndices.values
