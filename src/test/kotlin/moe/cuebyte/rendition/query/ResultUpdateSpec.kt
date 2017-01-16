@@ -24,7 +24,6 @@ object ResultUpdateSpec : Spek({
     }
 
     on("update result") {
-      // fixme auto
       val id = PostStr.insert {
         it["id"] = "A"
         it["name"] = "A"

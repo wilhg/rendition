@@ -19,9 +19,6 @@ fun Result.update(data: Map<String, Any>): String? {
       .filter { model.stringIndices.containsKey(it) }
       .forEach { remStrIndex[it] = this[it] as String }
 
-//  val dataWithId = HashMap(data)
-//  dataWithId.put(model.pk.name, this[model.pk.name])
-
   val updateData = UpdateData(model, data)
   val id = this[model.pk.name] as String
   val t = Connection.get().multi()

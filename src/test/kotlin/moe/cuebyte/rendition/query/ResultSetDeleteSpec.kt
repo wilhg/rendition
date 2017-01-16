@@ -41,11 +41,11 @@ object ResultSetDeleteSpec : Spek({
         PostStr.findBy("amount", 3).delete()
         val b = PostStr.findBy("name", "B")
         val c = PostStr.findBy("name", "C")
-        //        val d = PostStr.findBy("name", "D")
+        val d = PostStr.findBy("name", "D")
         assertTrue { PostStr.findBy("amount", 3).isEmpty() }
         assertTrue { b.isEmpty() }
         assertTrue { c.isEmpty() }
-        //        assertTrue { d.isEmpty() }
+        assertTrue { d.isEmpty() }
       }
     }
   }
