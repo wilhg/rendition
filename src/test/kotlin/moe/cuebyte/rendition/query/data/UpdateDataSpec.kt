@@ -20,7 +20,6 @@ object UpdateDataSpec : Spek({
 
       }
       it("should fails with unmatched schema") {
-        assertFails { UpdateData(PostAuto, mapOf("name" to "A", "amount" to 100)) }
         assertFails { UpdateData(PostAuto, mapOf("id" to "x", "name" to 1, "amount" to 100)) }
         assertFails { UpdateData(PostAuto, mapOf("id" to "x", "name" to "A", "amount" to "")) }
         assertFails { UpdateData(PostAuto, mapOf("id" to "x", "name" to "A", "echo" to "喵")) }
@@ -34,9 +33,6 @@ object UpdateDataSpec : Spek({
       val data1 = UpdateData(PostStr, body1)
       val data2 = UpdateData(PostStr, body2)
 
-      it("should be ok with id") {
-        assertEquals(data1.id, "x")
-      }
       it("should be ok with numIndices") {
         assertEquals(data1.numIndices.keys.first().name, "amount")
         assertEquals(data1.numIndices.keys.first().meta, Column.Meta.NUMBER_INDEX)
