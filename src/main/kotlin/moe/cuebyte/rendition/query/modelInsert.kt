@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.Model
+import moe.cuebyte.rendition.query.data.InsertData
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
@@ -39,7 +40,7 @@ private fun Model.commonInsert(data: InsertData): String? {
   return if (t.exec().isEmpty()) {
     null
   } else {
-    genId(this, id)
+    id
   }
   // --- END Transaction ---
 }

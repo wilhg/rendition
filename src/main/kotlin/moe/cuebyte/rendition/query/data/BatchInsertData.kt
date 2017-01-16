@@ -1,4 +1,4 @@
-package moe.cuebyte.rendition.query
+package moe.cuebyte.rendition.query.data
 
 import moe.cuebyte.rendition.Column
 import moe.cuebyte.rendition.Model

@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-object FindMethodSpec : Spek({
+object ModelFindSpec : Spek({
   describe("findMethodExt") {
     beforeGroup {
       Connection.set(Jedis("localhost"))
@@ -24,7 +24,7 @@ object FindMethodSpec : Spek({
 
     on("find") {
       val id = PostAuto.insert(mapOf("name" to "a", "amount" to 1))
-      val res = PostStr.find(id!!)
+      val res = PostAuto.find(id!!)
 
       it("should ok") {
         assertEquals(res.keys.toSet(), setOf("id", "name", "amount"))

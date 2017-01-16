@@ -11,7 +11,7 @@ fun Result.delete(): Boolean {
     remStrIndex[name] = this[name] as String
   }
 
-  val id = this[model.pk.name]!! as String
+  val id = this[model.pk.name] as String
   val t = Connection.get().multi()
   for ((name, value) in remStrIndex) {
     t.srem(genKey(model, name, value), id)
@@ -21,5 +21,5 @@ fun Result.delete(): Boolean {
   }
   t.del(genId(model, id))
 
-  return !t.exec().isEmpty()
+  return t.exec().isNotEmpty()
 }

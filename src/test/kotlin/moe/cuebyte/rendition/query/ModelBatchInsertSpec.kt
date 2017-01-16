@@ -10,27 +10,14 @@ import redis.clients.jedis.Jedis
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-object InsertMethodSpec : Spek({
-  describe("insert method") {
+object ModelBatchInsertSpec : Spek({
+  describe("batch insert method") {
     beforeGroup {
       Connection.set(Jedis("localhost"))
       Connection.get().select(4)
     }
     afterGroup {
       Connection.get().flushDB()
-    }
-    it("should return id") {
-      assertEquals(PostStr.insert {
-        it["id"] = "a"
-        it["name"] = "A"
-        it["amount"] = 100
-      }, genId(PostStr, "a"))
-    }
-  }
-
-  describe("batch insert method") {
-    beforeGroup {
-      Connection.set(Jedis("localhost"))
     }
     it("should return true") {
       assertTrue {

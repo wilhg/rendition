@@ -1,10 +1,16 @@
 package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.Result
-import moe.cuebyte.rendition.ResultSet
+import moe.cuebyte.rendition.query.data.UpdateData
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
+
+fun Result.update(body: (MutableMap<String, Any>)->Unit): String? {
+  val data: MutableMap<String, Any> = HashMap()
+  body(data)
+  return update(data)
+}
 
 fun Result.update(data: Map<String, Any>): String? {
   val remStrIndex: MutableMap<String, String> = HashMap()
@@ -13,11 +19,16 @@ fun Result.update(data: Map<String, Any>): String? {
       .filter { model.stringIndices.containsKey(it) }
       .forEach { remStrIndex[it] = this[it] as String }
 
-  val updateData = UpdateData(model, data)
-  val id = updateData.id
+  val dataWithId = HashMap(data)
+  println(model.pk.name)
+  println(this[model.pk.name])
+  dataWithId.put(model.pk.name, this[model.pk.name])
 
+  val updateData = UpdateData(model, dataWithId)
+  val id = updateData.id
   val t = Connection.get().multi()
-  for ((k, v) in remStrIndex) { // Delete index in set only
+
+  for ((k, v) in remStrIndex) {
     val col = model.stringIndices[k]!!
     t.srem(genKey(model, col, v), id)
   }

@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.Model
+import moe.cuebyte.rendition.query.data.BatchInsertData
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey

@@ -11,7 +11,7 @@ import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-object IncompleteColumnSpec : Spek({
+object ColumnSpec : Spek({
   describe("incomplete column") {
     on("set type") {
       it("should be int type") {
@@ -55,9 +55,7 @@ object IncompleteColumnSpec : Spek({
       }
     }
   }
-})
 
-object ColumnSpec : Spek({
   describe("columns") {
     on("type meta") {
       fun info(x: IncompleteColumn) = x.complete("").meta

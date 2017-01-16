@@ -12,7 +12,7 @@ fun Model.find(id: Number) = find(id.toString())
 
 fun Model.find(id: String): Result {
   val p = Connection.get().pipelined()
-  val resp = p.hgetAll(id)
+  val resp = p.hgetAll(genId(this, id))
   p.sync()
   return Result(this, resp)
 }

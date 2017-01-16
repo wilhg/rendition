@@ -1,6 +1,7 @@
-package moe.cuebyte.rendition.query
+package moe.cuebyte.rendition.query.data
 
 import moe.cuebyte.rendition.mock.PostStr
+import moe.cuebyte.rendition.query.data.BatchInsertData
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
