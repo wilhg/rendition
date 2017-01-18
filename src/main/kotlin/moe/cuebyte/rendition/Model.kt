@@ -1,6 +1,5 @@
 package moe.cuebyte.rendition
 
-import moe.cuebyte.rendition.util.Calculator
 import moe.cuebyte.rendition.util.IdGenerator
 import java.util.HashMap
 import java.util.concurrent.ConcurrentHashMap
@@ -35,14 +34,16 @@ abstract class Model {
     pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
-  fun and(vararg op: Model.()->Unit): Calculator {
-    val cal = Calculator(Calculator.Type.OR)
+  fun and(vararg methods: Model.()->ResultSet): Calculator {
+    val cal = Calculator(Calculator.Op.OR, methods.map { it(this) })
     calculatorMap.put(IdGenerator.next(), cal)
+    return cal
   }
 
-  fun or(vararg op: Model.()->Unit): Calculator {
-    val cal = Calculator(Calculator.Type.OR)
+  fun or(vararg methods: Model.()->ResultSet): Calculator {
+    val cal = Calculator(Calculator.Op.OR, methods.map { it(this) })
     calculatorMap.put(IdGenerator.next(), cal)
+    return cal
   }
 
   private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
