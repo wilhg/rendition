@@ -1,6 +1,9 @@
 package moe.cuebyte.rendition
 
+import moe.cuebyte.rendition.util.Calculator
+import moe.cuebyte.rendition.util.IdGenerator
 import java.util.HashMap
+import java.util.concurrent.ConcurrentHashMap
 
 internal data class FoolFourReturn(
     val pk: Column,
@@ -16,6 +19,8 @@ abstract class Model {
   val numberIndices: Map<String, Column>
   val columns: Map<String, Column>
 
+  private val calculatorMap: MutableMap<String, Calculator> = ConcurrentHashMap()
+
   constructor(name: String, schema: Map<String, IncompleteColumn>) {
     this.name = name
     val (a, b, c, d) = initIndex(schema)
@@ -30,6 +35,15 @@ abstract class Model {
     pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
+  fun and(vararg op: Model.()->Unit): Calculator {
+    val cal = Calculator(Calculator.Type.OR)
+    calculatorMap.put(IdGenerator.next(), cal)
+  }
+
+  fun or(vararg op: Model.()->Unit): Calculator {
+    val cal = Calculator(Calculator.Type.OR)
+    calculatorMap.put(IdGenerator.next(), cal)
+  }
 
   private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
     var tPk: Column? = null
@@ -41,7 +55,8 @@ abstract class Model {
       val col: Column = _col.complete(name)
       tColumns.put(col.name, col)
       when (col.meta) {
-        Column.Meta.NONE -> {}
+        Column.Meta.NONE -> {
+        }
         Column.Meta.STRING_PK -> tPk = col;
         Column.Meta.NUMBER_PK -> {
           tPk = col; tDoubleIndices.put(col.name, col)
@@ -51,7 +66,7 @@ abstract class Model {
       }
     }
     tPk ?:
-      throw Exception("No primary key in schema.")
+        throw Exception("No primary key in schema.")
 
     return FoolFourReturn(tPk, tStringIndices, tDoubleIndices, tColumns)
   }

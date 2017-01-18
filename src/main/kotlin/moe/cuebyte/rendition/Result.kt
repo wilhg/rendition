@@ -34,7 +34,4 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
   }
 }
 
-class ResultSet(val model: Model) : HashSet<Result>() {
-  val and get() = model
-  val or get() = model
-}
+class ResultSet(val model: Model) : HashSet<Result>()
