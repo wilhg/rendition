@@ -1,8 +1,7 @@
 package moe.cuebyte.rendition
 
 import moe.cuebyte.rendition.mock.PostStr
-import moe.cuebyte.rendition.query.method.findBy
-import moe.cuebyte.rendition.query.method.range
+import moe.cuebyte.rendition.query.method.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.on

@@ -1,34 +1,14 @@
 package moe.cuebyte.rendition
 
-class Calculator(
-    private val op: Op,
-    private val data: List<ResultSet>) {
+import java.util.LinkedList
 
-  enum class Op { AND, OR }
+class Calculator {
 
-  private var next: Calculator? = null
+  enum class Operator { AND, OR }
 
-  fun tail(): Calculator {
-    var cal: Calculator = this
-    while (cal.next != null) {
-      cal = cal.next!!
-    }
-    return cal
-  }
+  val operators: MutableList<Operator> = LinkedList()
+  val resultSets: MutableList<ResultSet> = LinkedList()
 
-  infix fun AND(results: ResultSet): Calculator {
 
-  }
-
-  infix fun OR(results: ResultSet): Calculator {
-
-  }
-
-  infix fun AND(cal: Calculator): Calculator {
-
-  }
-
-  infix fun OR(cal: Calculator): Calculator {
-
-  }
 }
+

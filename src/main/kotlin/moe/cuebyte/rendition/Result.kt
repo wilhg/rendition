@@ -36,19 +36,4 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
 
 class ResultSet(val model: Model) : HashSet<Result>() {
 
-  infix fun AND(results: ResultSet): Calculator {
-
-  }
-
-  infix fun OR(results: ResultSet): Calculator {
-
-  }
-
-  infix fun AND(cal: Calculator): Calculator {
-
-  }
-
-  infix fun OR(cal: Calculator): Calculator {
-
-  }
 }

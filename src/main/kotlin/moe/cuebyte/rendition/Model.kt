@@ -33,10 +33,6 @@ abstract class Model {
     pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
-  fun query(statement: Model.()->Calculator): ResultSet {
-
-  }
-
   private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
     var tPk: Column? = null
     val tStringIndices: MutableMap<String, Column> = HashMap()
@@ -47,8 +43,7 @@ abstract class Model {
       val col: Column = _col.complete(name)
       tColumns.put(col.name, col)
       when (col.meta) {
-        Column.Meta.NONE -> {
-        }
+        Column.Meta.NONE -> {}
         Column.Meta.STRING_PK -> tPk = col;
         Column.Meta.NUMBER_PK -> {
           tPk = col; tDoubleIndices.put(col.name, col)
