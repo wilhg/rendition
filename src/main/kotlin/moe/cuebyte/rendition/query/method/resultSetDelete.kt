@@ -1,4 +1,4 @@
-package moe.cuebyte.rendition.query
+package moe.cuebyte.rendition.query.method
 
 import moe.cuebyte.rendition.ResultSet
 import moe.cuebyte.rendition.util.Connection

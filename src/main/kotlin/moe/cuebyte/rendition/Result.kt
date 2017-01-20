@@ -36,18 +36,6 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
 
 class ResultSet(val model: Model) : HashSet<Result>() {
 
-  fun and(vararg methods: Model.()->ResultSet): ResultSet {
-    val cal = Calculator(Calculator.Op.AND, methods.map { it(model) })
-    this.next = cal
-    return cal
-  }
-
-  fun or(vararg methods: Model.()->ResultSet): ResultSet {
-    val cal = Calculator(Calculator.Op.OR, methods.map { it(model) })
-    this.next = cal
-    return cal
-  }
-
   infix fun AND(results: ResultSet): Calculator {
 
   }

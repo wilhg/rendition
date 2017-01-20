@@ -2,6 +2,9 @@ package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.mock.PostAuto
 import moe.cuebyte.rendition.mock.PostStr
+import moe.cuebyte.rendition.query.method.delete
+import moe.cuebyte.rendition.query.method.find
+import moe.cuebyte.rendition.query.method.insert
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genKey
 import org.jetbrains.spek.api.Spek

@@ -2,6 +2,7 @@ package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.mock.PostAuto
 import moe.cuebyte.rendition.mock.PostStr
+import moe.cuebyte.rendition.query.method.*
 import moe.cuebyte.rendition.util.Connection
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

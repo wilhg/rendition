@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition.query
 
 import moe.cuebyte.rendition.mock.PostStr
+import moe.cuebyte.rendition.query.method.batchInsert
 import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import org.jetbrains.spek.api.Spek

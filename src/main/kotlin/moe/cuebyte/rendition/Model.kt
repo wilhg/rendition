@@ -33,7 +33,7 @@ abstract class Model {
     pk = a; stringIndices = b; numberIndices = c; columns = d
   }
 
-  fun statement(statement: Model.()->Calculator): ResultSet {
+  fun query(statement: Model.()->Calculator): ResultSet {
 
   }
 
