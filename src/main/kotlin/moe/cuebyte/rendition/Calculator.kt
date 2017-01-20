@@ -28,7 +28,7 @@ class Calculator(resultSet: ResultSet) : LinkedList<Calculator.State>() {
     var results = this[0].resultSet
 
     for ((op, set) in this.subList(1, this.size)) {
-      when(op) {
+      when (op) {
         Op.AND -> results = results.intersect(set)
         Op.OR -> results = results.union(set)
         else -> throw Exception("The express in query block is illegal.")

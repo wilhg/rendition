@@ -20,7 +20,7 @@ fun Model.insert(data: Map<String, Any>): String? {
  * Use Transaction
  * @return id value in string if succeed, else return null
  */
-fun Model.insert(body: (MutableMap<String, Any>)->Unit): String? {
+inline fun Model.insert(body: (MutableMap<String, Any>)->Unit): String? {
   val map = HashMap<String, Any>()
   body(map)
   return insert(map)

@@ -6,7 +6,7 @@ import moe.cuebyte.rendition.util.Connection
 import moe.cuebyte.rendition.util.genId
 import moe.cuebyte.rendition.util.genKey
 
-fun Result.update(body: (MutableMap<String, Any>)->Unit): String? {
+inline fun Result.update(body: (MutableMap<String, Any>)->Unit): String? {
   val data: MutableMap<String, Any> = HashMap()
   body(data)
   return update(data)
