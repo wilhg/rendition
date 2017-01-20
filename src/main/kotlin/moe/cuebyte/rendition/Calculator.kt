@@ -15,4 +15,20 @@ class Calculator(
     }
     return cal
   }
+
+  infix fun AND(results: ResultSet): Calculator {
+
+  }
+
+  infix fun OR(results: ResultSet): Calculator {
+
+  }
+
+  infix fun AND(cal: Calculator): Calculator {
+
+  }
+
+  infix fun OR(cal: Calculator): Calculator {
+
+  }
 }

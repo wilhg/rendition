@@ -22,13 +22,13 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
     return model.columns.map { (name, col) ->
       val datum = data[name]!!
       when (col.type) {
-        String::class.java  -> name to datum
-        Int::class.java     -> name to datum.toInt()
-        Double::class.java  -> name to datum.toDouble()
+        String::class.java -> name to datum
+        Int::class.java -> name to datum.toInt()
+        Double::class.java -> name to datum.toDouble()
         Boolean::class.java -> name to datum.toBoolean()
-        Float::class.java   -> name to datum.toFloat()
-        Long::class.java    -> name to datum.toLong()
-        else                -> throw Exception("Internal error")
+        Float::class.java -> name to datum.toFloat()
+        Long::class.java -> name to datum.toLong()
+        else -> throw Exception("Internal error")
       }
     }.toMap()
   }
@@ -46,5 +46,21 @@ class ResultSet(val model: Model) : HashSet<Result>() {
     val cal = Calculator(Calculator.Op.OR, methods.map { it(model) })
     this.next = cal
     return cal
+  }
+
+  infix fun AND(results: ResultSet): Calculator {
+
+  }
+
+  infix fun OR(results: ResultSet): Calculator {
+
+  }
+
+  infix fun AND(cal: Calculator): Calculator {
+
+  }
+
+  infix fun OR(cal: Calculator): Calculator {
+
   }
 }
