@@ -12,19 +12,31 @@ class Calculator(resultSet: ResultSet) : LinkedList<Calculator.State>() {
     this.add(State(Op.HEAD, resultSet))
   }
 
-  fun addState(op: Op, resultSet: ResultSet): Calculator {
+  infix fun AND(resultSet: ResultSet): Calculator
+      = this.addState(moe.cuebyte.rendition.Calculator.Op.AND, resultSet)
+
+  infix fun OR(resultSet: ResultSet): Calculator
+      = this.addState(moe.cuebyte.rendition.Calculator.Op.OR, resultSet)
+
+  infix fun AND(calc: Calculator): Calculator
+      = this.cat(moe.cuebyte.rendition.Calculator.Op.AND, calc)
+
+  infix fun OR(calc: Calculator): Calculator
+      = this.cat(moe.cuebyte.rendition.Calculator.Op.OR, calc)
+
+  internal fun addState(op: Op, resultSet: ResultSet): Calculator {
     this.add(moe.cuebyte.rendition.Calculator.State(op, resultSet))
     return this
   }
 
-  fun cat(op: Op, calc: Calculator): Calculator {
+  internal fun cat(op: Op, calc: Calculator): Calculator {
     if (calc.isEmpty()) return this
     this.add(State(op, calc.first().resultSet))
     this.addAll(calc.subList(1, calc.size))
     return this
   }
 
-  fun compute(): ResultSet {
+  internal fun compute(): ResultSet {
     if (this.isEmpty()) {
       throw Exception("The express in query block is none.")
     }

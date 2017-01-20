@@ -1,3 +1,5 @@
+@file:JvmName("Model")
+@file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 
 import moe.cuebyte.rendition.Model

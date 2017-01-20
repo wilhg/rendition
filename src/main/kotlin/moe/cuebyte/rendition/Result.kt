@@ -1,3 +1,5 @@
+@file:JvmName("Result")
+@file:JvmMultifileClass
 package moe.cuebyte.rendition
 
 import redis.clients.jedis.Response
@@ -48,6 +50,18 @@ class ResultSet : HashSet<Result> {
   private constructor(model: Model, results: List<Result>) : super(results) {
     this.model = model
   }
+
+  infix fun AND(resultSet: ResultSet): Calculator
+      = Calculator(this).addState(Calculator.Op.AND, resultSet)
+
+  infix fun OR(resultSet: ResultSet): Calculator
+      = Calculator(this).addState(Calculator.Op.OR, resultSet)
+
+  infix fun AND(calc: Calculator): Calculator
+      = Calculator(this).cat(moe.cuebyte.rendition.Calculator.Op.AND, calc)
+
+  infix fun OR(calc: Calculator): Calculator
+      = Calculator(this).cat(moe.cuebyte.rendition.Calculator.Op.OR, calc)
 
   internal fun intersect(resultSet: ResultSet): ResultSet {
     val (bigger, smaller) = getPair(this, resultSet)

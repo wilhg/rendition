@@ -1,3 +1,5 @@
+@file:JvmName("Model")
+@file:JvmMultifileClass
 package moe.cuebyte.rendition
 
 import java.util.HashMap
@@ -30,6 +32,8 @@ abstract class Model {
     val (a, b, c, d) = initIndex(schema)
     pk = a; stringIndices = b; numberIndices = c; columns = d
   }
+
+  fun query(statement: Model.()->Calculator): ResultSet = statement(this).compute()
 
   private fun initIndex(schema: Map<String, IncompleteColumn>): FoolFourReturn {
     var tPk: Column? = null
