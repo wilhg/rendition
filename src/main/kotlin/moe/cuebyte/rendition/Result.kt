@@ -1,6 +1,7 @@
 package moe.cuebyte.rendition
 
 import redis.clients.jedis.Response
+import java.util.TreeSet
 
 class Result(val model: Model, private val resp: Response<Map<String, String>>)
   : Map<String, Any> {
@@ -15,6 +16,9 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
   override fun get(key: String) = lazyValue[key]
   override fun isEmpty() = lazyValue.isEmpty()
 
+  fun getId(): String = lazyValue[pkName] as String
+
+  private val pkName = model.pk.name
   private val lazyValue by lazy { init() }
 
   private fun init(): Map<String, Any> {
@@ -34,6 +38,41 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
   }
 }
 
-class ResultSet(val model: Model) : HashSet<Result>() {
+class ResultSet : HashSet<Result> {
+  val model: Model
 
+  constructor(model: Model) : super() {
+    this.model = model
+  }
+
+  private constructor(model: Model, results: List<Result>) : super(results) {
+    this.model = model
+  }
+
+  internal fun intersect(resultSet: ResultSet): ResultSet {
+    val (bigger, smaller) = getPair(this, resultSet)
+    val set = TreeSet(bigger.map(Result::getId))
+    set.retainAll(smaller.map(Result::getId))
+    return ResultSet(model, this.filter { it.getId() in set })
+  }
+
+  internal fun union(resultSet: ResultSet): ResultSet {
+    val (bigger, smaller) = getPair(this, resultSet)
+    val baseIds = bigger.map(Result::getId).toSortedSet()
+    smaller
+        .filter { it.getId() !in baseIds }
+        .forEach { bigger.add(it) }
+    return bigger
+  }
+
+  /**
+   * @return Pair(Bigger, Smaller)
+   */
+  private fun getPair(a: ResultSet, b: ResultSet): Pair<ResultSet, ResultSet> {
+    return if (a.size > b.size) {
+      Pair<ResultSet, ResultSet>(a, b)
+    } else {
+      Pair<ResultSet, ResultSet>(b, a)
+    }
+  }
 }

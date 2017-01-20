@@ -17,8 +17,6 @@ abstract class Model {
   val numberIndices: Map<String, Column>
   val columns: Map<String, Column>
 
-  private val calculatorMap: MutableMap<String, Calculator> = ConcurrentHashMap()
-
   constructor(name: String, schema: Map<String, IncompleteColumn>) {
     this.name = name
     val (a, b, c, d) = initIndex(schema)
