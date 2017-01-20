@@ -25,8 +25,13 @@ class Calculator(resultSet: ResultSet) : LinkedList<Calculator.State>() {
   }
 
   fun compute(): ResultSet {
+    if (this.isEmpty()) {
+      throw Exception("The express in query block is none.")
+    }
     var results = this[0].resultSet
-
+    if (this.size == 1) {
+      return results
+    }
     for ((op, set) in this.subList(1, this.size)) {
       when (op) {
         Op.AND -> results = results.intersect(set)

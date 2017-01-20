@@ -6,20 +6,20 @@ import java.util.TreeSet
 class Result(val model: Model, private val resp: Response<Map<String, String>>)
   : Map<String, Any> {
 
-  override val entries get() = lazyValue.entries
-  override val values get() = lazyValue.values
-  override val keys get() = lazyValue.keys
-  override val size get() = lazyValue.size
+  override val entries get() = lazyMap.entries
+  override val values get() = lazyMap.values
+  override val keys get() = lazyMap.keys
+  override val size get() = lazyMap.size
 
-  override fun containsValue(value: Any) = lazyValue.containsValue(value)
-  override fun containsKey(key: String) = lazyValue.containsKey(key)
-  override fun get(key: String) = lazyValue[key]
-  override fun isEmpty() = lazyValue.isEmpty()
+  override fun containsValue(value: Any) = lazyMap.containsValue(value)
+  override fun containsKey(key: String) = lazyMap.containsKey(key)
+  override fun get(key: String) = lazyMap[key]
+  override fun isEmpty() = lazyMap.isEmpty()
 
-  internal val id: String get() = lazyValue[pkName].toString()
+  internal val id: String get() = lazyMap[pkName].toString()
 
   private val pkName: String = model.pk.name
-  private val lazyValue: Map<String, Any> by lazy { init() }
+  private val lazyMap: Map<String, Any> by lazy { init() }
 
   private fun init(): Map<String, Any> {
     val data = resp.get()
@@ -58,9 +58,9 @@ class ResultSet : HashSet<Result> {
 
   internal fun union(resultSet: ResultSet): ResultSet {
     val (bigger, smaller) = getPair(this, resultSet)
-    val baseIds = bigger.map(Result::id).toSortedSet()
+    val baseIdTree = bigger.map(Result::id).toSortedSet()
     smaller
-        .filter { it.id !in baseIds }
+        .filter { it.id !in baseIdTree }
         .forEach { bigger.add(it) }
     return bigger
   }
