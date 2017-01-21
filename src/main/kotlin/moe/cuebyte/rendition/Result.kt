@@ -18,6 +18,8 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
   override fun get(key: String) = lazyMap[key]
   override fun isEmpty() = lazyMap.isEmpty()
 
+  override fun toString() = lazyMap.toString()
+
   internal val id: String get() = lazyMap[pkName].toString()
 
   private val pkName: String = model.pk.name
@@ -49,6 +51,15 @@ class ResultSet : HashSet<Result> {
 
   private constructor(model: Model, results: List<Result>) : super(results) {
     this.model = model
+  }
+
+  override fun toString(): String {
+    var str = "[\n"
+    for (res in this) {
+      str += "${res.toString()},\n"
+    }
+    str += "]\n"
+    return str
   }
 
   infix fun AND(resultSet: ResultSet): Calculator
