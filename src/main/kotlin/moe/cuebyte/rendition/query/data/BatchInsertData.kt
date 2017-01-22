@@ -31,7 +31,7 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
       tmStrMultiIndex[col] = HashMap()
     }
     for (col in model.numberIndices.values) {
-      tmStrMultiIndex[col] = HashMap()
+      tmNumMultiIndex[col] = HashMap()
     }
 
     for (input in batchInput) {
