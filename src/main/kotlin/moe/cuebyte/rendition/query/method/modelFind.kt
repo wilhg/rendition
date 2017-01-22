@@ -1,4 +1,4 @@
-@file:JvmName("Model")
+@file:JvmName("ModelMethod")
 @file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 

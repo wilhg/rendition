@@ -1,5 +1,6 @@
 @file:JvmName("Result")
 @file:JvmMultifileClass
+
 package moe.cuebyte.rendition
 
 import redis.clients.jedis.Response
@@ -84,9 +85,11 @@ class ResultSet : HashSet<Result> {
   internal fun union(resultSet: ResultSet): ResultSet {
     val (bigger, smaller) = getPair(this, resultSet)
     val baseIdTree = bigger.map(Result::id).toSortedSet()
-    smaller
-        .filter { it.id !in baseIdTree }
-        .forEach { bigger.add(it) }
+    for (result in smaller) { // For the performance,
+      if (result.id !in baseIdTree) {
+        bigger.add(result)
+      }
+    }
     return bigger
   }
 

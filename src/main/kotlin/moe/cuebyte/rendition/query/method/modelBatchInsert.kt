@@ -1,4 +1,4 @@
-@file:JvmName("Model")
+@file:JvmName("ModelMethod")
 @file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 
@@ -22,7 +22,9 @@ fun Model.batchInsert(batch: List<Map<String, Any>>): Boolean {
   }
   for ((col, idsMap) in bInsert.numMultiIndex) {
     for ((idxName, ids) in idsMap) {
-      ids.forEach { t.zadd(genKey(this, col), idxName, it) }
+      for (id in ids) {
+        t.zadd(genKey(this, col), idxName, id)
+      }
     }
   }
   return !t.exec().isEmpty()

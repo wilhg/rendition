@@ -22,7 +22,7 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
   }
 
   override fun indicesInit(input: Map<String, Any>) {
-    model.stringIndices.values.forEach { idx ->
+    for (idx in model.stringIndices.values) {
       input[idx.name] ?:
           throw Exception("Index-${idx.name} shall be defined.")
 
@@ -31,7 +31,7 @@ internal class InsertData(model: Model, input: Map<String, Any>) : InputData(mod
       }
       tStrIndices.put(idx, input[idx.name] as String)
     }
-    model.numberIndices.values.forEach { idx ->
+    for (idx in model.numberIndices.values) {
       input[idx.name] ?:
           throw Exception("Index-${idx.name} shall be defined.")
 

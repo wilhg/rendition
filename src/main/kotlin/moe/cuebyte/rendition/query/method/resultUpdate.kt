@@ -1,4 +1,4 @@
-@file:JvmName("Result")
+@file:JvmName("ResultMethod")
 @file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 
@@ -17,9 +17,10 @@ inline fun Result.update(body: (MutableMap<String, Any>)->Unit): String? {
 fun Result.update(data: Map<String, Any>): String? {
   val remStrIndex: MutableMap<String, String> = HashMap()
 
-  data.keys
-      .filter { model.stringIndices.containsKey(it) }
-      .forEach { remStrIndex[it] = this[it] as String }
+  for (key in data.keys) { // For better performance
+    if (model.stringIndices.containsKey(key))
+      remStrIndex[key] = this[key] as String
+  }
 
   val updateData = UpdateData(model, data)
   val id = this[model.pk.name] as String

@@ -7,13 +7,14 @@ internal class UpdateData(model: Model, input: Map<String, Any>) : InputData(mod
   override fun idInit(input: Map<String, Any>) {}
 
   override fun indicesInit(input: Map<String, Any>) {
-    model.stringIndices.values
-        .filter { input[it.name] != null }
-        .forEach { tStrIndices.put(it, input[it.name] as String) }
-
-    model.numberIndices.values
-        .filter { input[it.name] != null }
-        .forEach { tNumIndices.put(it, (input[it.name] as Number).toDouble()) }
+    for (col in model.stringIndices.values) {
+      if (input[col.name] != null)
+        tStrIndices.put(col, input[col.name] as String)
+    }
+    for (col in model.numberIndices.values) {
+      if (input[col.name] != null)
+        tNumIndices.put(col, (input[col.name] as Number).toDouble())
+    }
   }
 
   override fun dataInit(input: Map<String, Any>) {

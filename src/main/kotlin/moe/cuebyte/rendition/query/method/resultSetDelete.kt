@@ -1,4 +1,4 @@
-@file:JvmName("Result")
+@file:JvmName("ResultSetMethod")
 @file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 
@@ -25,7 +25,9 @@ fun ResultSet.delete(): Boolean {
   for (name in model.numberIndices.keys) {
     t.zrem(genKey(model, name), *ids)
   }
-  ids.forEach { t.del(genId(model, it)) }
+  for (id in ids) {
+    t.del(genId(model, id))
+  }
 
   return !t.exec().isEmpty()
 }

@@ -1,4 +1,4 @@
-@file:JvmName("Result")
+@file:JvmName("ResultSetMethod")
 @file:JvmMultifileClass
 package moe.cuebyte.rendition.query.method
 
@@ -24,7 +24,9 @@ fun ResultSet.update(data: Map<String, Any>): Boolean {
     }
   }
 
-  ids.forEach { t.hmset(genId(model, it), updateData.body) }
+  for (id in ids) {
+    t.hmset(genId(model, id), updateData.body)
+  }
   for ((col, value) in updateData.strIndices) {
     t.sadd(genKey(model, col, value), *ids)
   }

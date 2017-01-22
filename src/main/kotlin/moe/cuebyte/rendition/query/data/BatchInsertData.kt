@@ -26,8 +26,13 @@ internal class BatchInsertData(val model: Model, batchInput: List<Map<String, An
     val tmNumMultiIndex: MutableMultiIndex<Double> = HashMap()
 
     checkInput(batchInput[0])
-    model.stringIndices.values.forEach { tmStrMultiIndex[it] = HashMap() }
-    model.numberIndices.values.forEach { tmNumMultiIndex[it] = HashMap() }
+
+    for (col in model.stringIndices.values) {
+      tmStrMultiIndex[col] = HashMap()
+    }
+    for (col in model.numberIndices.values) {
+      tmStrMultiIndex[col] = HashMap()
+    }
 
     for (input in batchInput) {
       val okInput: Map<String, String> = model.columns
