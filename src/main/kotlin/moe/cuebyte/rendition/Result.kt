@@ -4,6 +4,7 @@
 package moe.cuebyte.rendition
 
 import redis.clients.jedis.Response
+import java.util.LinkedList
 import java.util.TreeSet
 
 class Result(val model: Model, private val resp: Response<Map<String, String>>)
@@ -26,20 +27,27 @@ class Result(val model: Model, private val resp: Response<Map<String, String>>)
   private val pkName: String = model.pk.name
   private val lazyMap: Map<String, Any> by lazy { init() }
 
+  /**
+   * For better performance, avoid using lambda
+   */
   private fun init(): Map<String, Any> {
     val data = resp.get()
-    return model.columns.map { (name, col) ->
+    val outputMap = HashMap<String, Any>()
+
+    for ((name, col) in model.columns) {
       val datum = data[name]!!
-      when (col.type) {
-        String::class.java -> name to datum
-        Int::class.java -> name to datum.toInt()
-        Double::class.java -> name to datum.toDouble()
-        Boolean::class.java -> name to datum.toBoolean()
-        Float::class.java -> name to datum.toFloat()
-        Long::class.java -> name to datum.toLong()
+      val value: Any = when (col.type) {
+        String::class.java -> datum
+        Int::class.java -> datum.toInt()
+        Double::class.java -> datum.toDouble()
+        Boolean::class.java -> datum.toBoolean()
+        Float::class.java -> datum.toFloat()
+        Long::class.java -> datum.toLong()
         else -> throw Exception("Internal error")
       }
-    }.toMap()
+      outputMap.put(name, value)
+    }
+    return outputMap
   }
 }
 
@@ -75,20 +83,39 @@ class ResultSet : HashSet<Result> {
   infix fun OR(calc: Calculator): Calculator
       = Calculator(this).cat(moe.cuebyte.rendition.Calculator.Op.OR, calc)
 
+  /**
+   * For better performance, avoid using lambda
+   */
   internal fun intersect(resultSet: ResultSet): ResultSet {
     val (bigger, smaller) = getPair(this, resultSet)
-    val set = TreeSet(bigger.map(Result::id))
-    set.retainAll(smaller.map(Result::id))
-    return ResultSet(model, this.filter { it.id in set })
+    val biggerIds = LinkedList<String>()
+    val smallerIds = LinkedList<String>()
+    for (result in bigger) biggerIds.add(result.id)
+    for (result in smaller) smallerIds.add(result.id)
+
+    val idSet = TreeSet(biggerIds)
+    idSet.retainAll(smallerIds)
+
+    val resultList = LinkedList<Result>()
+    for (result in this) {
+      if (idSet.contains(result.id))
+        resultList.add(result)
+    }
+    return ResultSet(model, resultList)
   }
 
+  /**
+   * For better performance, avoid using lambda and sugars
+   */
   internal fun union(resultSet: ResultSet): ResultSet {
     val (bigger, smaller) = getPair(this, resultSet)
-    val baseIdTree = bigger.map(Result::id).toSortedSet()
-    for (result in smaller) { // For the performance,
-      if (result.id !in baseIdTree) {
+    val biggerIds = LinkedList<String>()
+    for (result in bigger) biggerIds.add(result.id)
+
+    val baseIdTree = TreeSet(biggerIds)
+    for (result in smaller) {
+      if (!baseIdTree.contains(result.id))
         bigger.add(result)
-      }
     }
     return bigger
   }
