@@ -40,7 +40,7 @@ class Calculator(resultSet: ResultSet) : LinkedList<Calculator.State>() {
     if (this.isEmpty()) {
       throw Exception("The express in query block is none.")
     }
-    var results = this[0].resultSet
+    var results: ResultSet = this[0].resultSet
     if (this.size == 1) {
       return results
     }
